@@ -154,4 +154,26 @@ module Examples
   #     end
   #   end
   # end
+
+  example "flex-flow: row-reverse nowrap" do
+    UI.build(flex: { direction: :row }) do
+      node(background: {r: 200}, flex: { direction: :row_reverse, wrap: false }, w: 100) do
+        node(width: 50, height: 50, background: {g: 200}) { text "4" }
+        node(width: 50, height: 50, background: {g: 200}) { text "3" }
+        node(width: 50, height: 50, background: {g: 200}) { text "2" }
+        node(width: 50, height: 50, background: {g: 200}) { text "1" }
+      end
+    end
+  end
+
+  # example "flex-flow: row-reverse wrap" do
+  #   UI.build(flex: { direction: :row }) do
+  #     node(background: {r: 200}, flex: { direction: :row_reverse, wrap: true }, w: 100) do
+  #       node(width: 50, height: 50, background: {g: 200}) { text "4" }
+  #       node(width: 50, height: 50, background: {g: 200}) { text "3" }
+  #       node(width: 50, height: 50, background: {g: 200}) { text "2" }
+  #       node(width: 50, height: 50, background: {g: 200}) { text "1" }
+  #     end
+  #   end
+  # end
 end
