@@ -224,7 +224,7 @@ module UI
           if horizontal_layout?(node)
             case alignment_shorthand(node, :align).self || alignment_shorthand(node, :align).items
             when :start
-              child.internal.screen_y += cross_start
+              child.internal.screen_y = cross_start
             when :center
               child.internal.screen_y = cross_start + (cross_content - child.internal.definite_height).half
             when :end

@@ -103,6 +103,21 @@ module Examples
     end
   end
 
+  example "flex-direction: row-reverse swaps main start and end" do
+    UI.build(flex: { direction: :column }) do
+      node(background: DARK_BACKGROUND, flex: { direction: :row }) do
+        node(width: 50, height: 50, background: LIGHT_BACKGROUND, margin: 20, align: :center, justify: :center) { text "1" }
+        node(width: 50, height: 50, background: LIGHT_BACKGROUND, margin: 20, align: :center, justify: :center) { text "2" }
+        node(width: 50, height: 50, background: LIGHT_BACKGROUND, margin: 20, align: :center, justify: :center) { text "3" }
+      end
+      node(background: {r:200}, flex: { direction: :row_reverse }) do
+        node(width: 50, height: 50, background: LIGHT_BACKGROUND, margin: 20, align: :center, justify: :center) { text "3" }
+        node(width: 50, height: 50, background: LIGHT_BACKGROUND, margin: 20, align: :center, justify: :center) { text "2" }
+        node(width: 50, height: 50, background: LIGHT_BACKGROUND, margin: 20, align: :center, justify: :center) { text "1" }
+      end
+    end
+  end
+
   example "flex-direction: column-reverse swaps main start and end" do
     UI.build(flex: { direction: :row }) do
       node(background: DARK_BACKGROUND, flex: { direction: :column }) do
