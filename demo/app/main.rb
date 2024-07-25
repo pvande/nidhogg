@@ -132,4 +132,26 @@ module Examples
       end
     end
   end
+
+  example "flex-flow: row nowrap" do
+    UI.build(flex: { direction: :row }) do
+      node(background: {r: 200}, flex: { direction: :row, wrap: false }, w: 100) do
+        node(width: 50, height: 50, background: {g: 200}) { text "1" }
+        node(width: 50, height: 50, background: {g: 200}) { text "2" }
+        node(width: 50, height: 50, background: {g: 200}) { text "3" }
+        node(width: 50, height: 50, background: {g: 200}) { text "4" }
+      end
+    end
+  end
+
+  # example "flex-flow: row wrap" do
+  #   UI.build(flex: { direction: :row }) do
+  #     node(background: {r: 200}, flex: { direction: :row, wrap: true }, w: 100) do
+  #       node(width: 50, height: 50, background: {g: 200}) { text "1" }
+  #       node(width: 50, height: 50, background: {g: 200}) { text "2" }
+  #       node(width: 50, height: 50, background: {g: 200}) { text "3" }
+  #       node(width: 50, height: 50, background: {g: 200}) { text "4" }
+  #     end
+  #   end
+  # end
 end
