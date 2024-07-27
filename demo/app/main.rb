@@ -50,6 +50,8 @@ def generate_screenshots
   $gtk.request_quit if $state.selected_test == $state.tests.count
 end
 
+# @NOTE These examples have been adapted from the CSS Flexbox Test Suite.
+# @SEE https://test.csswg.org/suites/css-flexbox-1_dev/nightly-unstable/html/reftest-toc.htm
 module Examples
   extend self
 
@@ -135,7 +137,7 @@ module Examples
 
   example "flex-flow: row nowrap" do
     UI.build(flex: { direction: :row }) do
-      node(background: {r: 200}, flex: { direction: :row, wrap: false }, w: 100) do
+      node(background: {r: 200}, flex: { direction: :row, wrap: false }, width: 100) do
         node(width: 50, height: 50, background: {g: 200}) { text "1" }
         node(width: 50, height: 50, background: {g: 200}) { text "2" }
         node(width: 50, height: 50, background: {g: 200}) { text "3" }
@@ -144,9 +146,75 @@ module Examples
     end
   end
 
-  # example "flex-flow: row wrap" do
+  example "flex-flow: row wrap" do
+    UI.build(flex: { direction: :row }) do
+      node(background: {r: 200}, flex: { direction: :row, wrap: true }, width: 100) do
+        node(width: 50, height: 50, background: {g: 200}) { text "1" }
+        node(width: 50, height: 50, background: {g: 200}) { text "2" }
+        node(width: 50, height: 50, background: {g: 200}) { text "3" }
+        node(width: 50, height: 50, background: {g: 200}) { text "4" }
+      end
+    end
+  end
+
+  example "flex-flow: row wrap-reverse" do
+    UI.build(flex: { direction: :row }) do
+      node(background: {r: 200}, flex: { direction: :row, wrap: :reverse }, width: 100) do
+        node(width: 50, height: 50, background: {g: 200}) { text "1" }
+        node(width: 50, height: 50, background: {g: 200}) { text "2" }
+        node(width: 50, height: 50, background: {g: 200}) { text "3" }
+        node(width: 50, height: 50, background: {g: 200}) { text "4" }
+      end
+    end
+  end
+
+  # example "flex-flow: row-reverse nowrap" do
   #   UI.build(flex: { direction: :row }) do
-  #     node(background: {r: 200}, flex: { direction: :row, wrap: true }, w: 100) do
+  #     node(background: {r: 200}, flex: { direction: :row_reverse, wrap: false }, width: 100) do
+  #       node(width: 50, height: 50, background: {g: 200}) { text "4" }
+  #       node(width: 50, height: 50, background: {g: 200}) { text "3" }
+  #       node(width: 50, height: 50, background: {g: 200}) { text "2" }
+  #       node(width: 50, height: 50, background: {g: 200}) { text "1" }
+  #     end
+  #   end
+  # end
+
+  example "flex-flow: row-reverse wrap" do
+    UI.build(flex: { direction: :row }) do
+      node(background: {r: 200}, flex: { direction: :row_reverse, wrap: true }, width: 100) do
+        node(width: 50, height: 50, background: {g: 200}) { text "4" }
+        node(width: 50, height: 50, background: {g: 200}) { text "3" }
+        node(width: 50, height: 50, background: {g: 200}) { text "2" }
+        node(width: 50, height: 50, background: {g: 200}) { text "1" }
+      end
+    end
+  end
+
+  example "flex-flow: row-reverse wrap-reverse" do
+    UI.build(flex: { direction: :row }) do
+      node(background: {r: 200}, flex: { direction: :row_reverse, wrap: :reverse }, width: 100) do
+        node(width: 50, height: 50, background: {g: 200}) { text "4" }
+        node(width: 50, height: 50, background: {g: 200}) { text "3" }
+        node(width: 50, height: 50, background: {g: 200}) { text "2" }
+        node(width: 50, height: 50, background: {g: 200}) { text "1" }
+      end
+    end
+  end
+
+  # example "flex-flow: column nowrap" do
+  #   UI.build(flex: { direction: :row }) do
+  #     node(background: {r: 200}, flex: { direction: :column, wrap: false }, width: 100, height: 100) do
+  #       node(height: 50, background: {g: 200}) { text "1" }
+  #       node(height: 50, background: {g: 200}) { text "2" }
+  #       node(height: 50, background: {g: 200}) { text "3" }
+  #       node(height: 50, background: {g: 200}) { text "4" }
+  #     end
+  #   end
+  # end
+
+  # example "flex-flow: column wrap" do
+  #   UI.build(flex: { direction: :row }) do
+  #     node(background: {r: 200}, flex: { direction: :column, wrap: true }, width: 100, height: 100) do
   #       node(width: 50, height: 50, background: {g: 200}) { text "1" }
   #       node(width: 50, height: 50, background: {g: 200}) { text "2" }
   #       node(width: 50, height: 50, background: {g: 200}) { text "3" }
@@ -155,20 +223,42 @@ module Examples
   #   end
   # end
 
-  example "flex-flow: row-reverse nowrap" do
-    UI.build(flex: { direction: :row }) do
-      node(background: {r: 200}, flex: { direction: :row_reverse, wrap: false }, w: 100) do
-        node(width: 50, height: 50, background: {g: 200}) { text "4" }
-        node(width: 50, height: 50, background: {g: 200}) { text "3" }
-        node(width: 50, height: 50, background: {g: 200}) { text "2" }
-        node(width: 50, height: 50, background: {g: 200}) { text "1" }
-      end
-    end
-  end
-
-  # example "flex-flow: row-reverse wrap" do
+  # example "flex-flow: column wrap-reverse" do
   #   UI.build(flex: { direction: :row }) do
-  #     node(background: {r: 200}, flex: { direction: :row_reverse, wrap: true }, w: 100) do
+  #     node(background: {r: 200}, flex: { direction: :column, wrap: :reverse }, width: 100, height: 100) do
+  #       node(width: 50, height: 50, background: {g: 200}) { text "1" }
+  #       node(width: 50, height: 50, background: {g: 200}) { text "2" }
+  #       node(width: 50, height: 50, background: {g: 200}) { text "3" }
+  #       node(width: 50, height: 50, background: {g: 200}) { text "4" }
+  #     end
+  #   end
+  # end
+
+  # example "flex-flow: column-reverse nowrap" do
+  #   UI.build(flex: { direction: :row }) do
+  #     node(background: {r: 200}, flex: { direction: :column_reverse, wrap: false }, width: 100, height: 100) do
+  #       node(height: 50, background: {g: 200}) { text "4" }
+  #       node(height: 50, background: {g: 200}) { text "3" }
+  #       node(height: 50, background: {g: 200}) { text "2" }
+  #       node(height: 50, background: {g: 200}) { text "1" }
+  #     end
+  #   end
+  # end
+
+  # example "flex-flow: column-reverse wrap" do
+  #   UI.build(flex: { direction: :row }) do
+  #     node(background: {r: 200}, flex: { direction: :column_reverse, wrap: true }, width: 100, height: 100) do
+  #       node(width: 50, height: 50, background: {g: 200}) { text "4" }
+  #       node(width: 50, height: 50, background: {g: 200}) { text "3" }
+  #       node(width: 50, height: 50, background: {g: 200}) { text "2" }
+  #       node(width: 50, height: 50, background: {g: 200}) { text "1" }
+  #     end
+  #   end
+  # end
+
+  # example "flex-flow: column-reverse wrap-reverse" do
+  #   UI.build(flex: { direction: :row }) do
+  #     node(background: {r: 200}, flex: { direction: :column_reverse, wrap: :reverse }, width: 100, height: 100) do
   #       node(width: 50, height: 50, background: {g: 200}) { text "4" }
   #       node(width: 50, height: 50, background: {g: 200}) { text "3" }
   #       node(width: 50, height: 50, background: {g: 200}) { text "2" }

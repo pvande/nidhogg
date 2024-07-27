@@ -111,6 +111,55 @@ module UI
 
         node.internal.definite_width += node.internal.padding.horizontal
         node.internal.definite_height += node.internal.padding.vertical
+
+        if wrapped_layout?(node)
+          if horizontal_layout?(node)
+            node.internal.definite_height = node.internal.padding.vertical if node.style.height.nil?
+          else
+            node.internal.definite_width = node.internal.padding.horizontal if node.style.width.nil?
+          end
+        end
+
+        next unless node.respond_to?(:children)
+
+        lines = [[]]
+        main = cross = longest_child = 0
+        node.children.each do |child|
+          parent_main = horizontal_layout?(node) ? node.internal.definite_width - node.internal.padding.horizontal : node.internal.definite_height - node.internal.padding.vertical
+          delta_main = horizontal_layout?(node) ? child.internal.definite_width + child.internal.padding.horizontal : child.internal.definite_height + child.internal.padding.vertical
+
+          if wrapped_layout?(node) && main + delta_main > parent_main
+            length = longest_child + (horizontal_layout?(node) ? node.internal.gap.column : node.internal.gap.row)
+            lines << []
+
+            if horizontal_layout?(node)
+              node.internal.definite_height += length
+            else
+              node.internal.definite_width += length
+            end
+
+            longest_child = 0
+            main = 0
+            cross += length
+          end
+
+          main += delta_main
+          main += horizontal_layout?(node) ? node.internal.gap.row : node.internal.gap.column if compact_layout?(node)
+          lines.last&.push(child)
+
+          child_size = horizontal_layout?(node) ? child.internal.definite_height : child.internal.definite_width
+          longest_child = child_size if child_size > longest_child
+        end
+
+        node.internal.lines = lines
+
+        if wrapped_layout?(node)
+          if horizontal_layout?(node)
+            node.internal.definite_height += longest_child
+          else
+            node.internal.definite_width += longest_child
+          end
+        end
       end
 
       queue.each do |node|
@@ -122,140 +171,151 @@ module UI
         main_gap = horizontal_layout?(node) ? node.internal.gap.horizontal : node.internal.gap.vertical
         cross_gap = horizontal_layout?(node) ? node.internal.gap.vertical : node.internal.gap.horizontal
 
-        main_available = horizontal_layout?(node) ? node.internal.definite_width - node.internal.padding.horizontal : node.internal.definite_height - node.internal.padding.vertical
-        cross_available = horizontal_layout?(node) ? node.internal.definite_height - node.internal.padding.vertical : node.internal.definite_width - node.internal.padding.horizontal
-
-        # if compact_layout?(node)
-        #   main_available += horizontal_layout?(node) ? node.internal.margin.horizontal : node.internal.margin.vertical
-        #   cross_available += horizontal_layout?(node) ? node.internal.margin.vertical : node.internal.margin.horizontal
-        # end
-
-        main_content = main_available
-        cross_content = cross_available
-
-        total_grow = 0
-        total_shrink = 0
-
-        node.children.each do |child|
-          main_available -= horizontal_layout?(node) ? child.internal.definite_width : child.internal.definite_height
-          cross_available -= horizontal_layout?(node) ? child.internal.definite_height : child.internal.definite_width
-
-          if compact_layout?(node)
-            main_available -= horizontal_layout?(node) ? child.internal.margin.horizontal : child.internal.margin.vertical
-            cross_available -= horizontal_layout?(node) ? child.internal.margin.vertical : child.internal.margin.horizontal
-          end
-
-          total_grow += child.style.grow if child.style.fetch(:grow, 0) > 0
-          total_shrink += child.style.shrink if child.style.fetch(:shrink, 0) > 0
+        lines = node.internal.lines
+        lines = lines.reverse_each if [:reverse, :wrap_reverse].include?(node.style.dig(:flex, :wrap))
+        cross_sizes = lines.map do |line|
+          line.map do |child|
+            horizontal_layout?(node) ? child.internal.definite_height : child.internal.definite_width
+          end.max
         end
 
-        main_available -= main_gap * (node.children.length - 1) if compact_layout?(node)
+        lines.each_with_index do |line, idx|
+          cross_size = cross_sizes[idx]
+          total_grow = 0
+          total_shrink = 0
 
-        grow_fraction = nil
-        if total_grow.pos?
-          grow_fraction = main_available / total_grow
-          main_available = 0
-        end
+          main_available = horizontal_layout?(node) ? node.internal.definite_width - node.internal.padding.horizontal : node.internal.definite_height - node.internal.padding.vertical
+          cross_available = horizontal_layout?(node) ? node.internal.definite_height - node.internal.padding.vertical : node.internal.definite_width - node.internal.padding.horizontal
 
-        case alignment_shorthand(node, :justify).content
-        when :start
-          main_pos += main_available if reverse_layout?(node)
-        when :center
-          main_pos += main_available / 2
-        when :end
-          main_pos += main_available unless reverse_layout?(node)
-        when :space_around
-          main_pos += main_available / (node.children.length * 2)
-        when :space_between
-          main_pos += 0
-        when :space_evenly
-          main_pos += main_available / (node.children.length + 1)
-        end
+          main_content = main_available
+          cross_content = cross_available
 
-        case alignment_shorthand(node, :align).items
-        when :start
-          cross_pos += 0
-        when :center
-          cross_pos += (cross_available - node.children.lazy.filter_map { |x| x.internal.screen_height }.sum) / 2
-        when :end
-          cross_pos += cross_available - node.children.lazy.filter_map { |x| x.internal.screen_height }.sum
-        when :stretch
-          cross_pos += 0
-        when :space_around
-          cross_pos += (cross_available - node.children.lazy.filter_map { |x| x.internal.screen_height }.sum) / 2
-        when :space_between
-          cross_pos += 0
-        when :space_evenly
-          cross_pos += 0
-        end
+          main_available -= main_gap * (line.length - 1) if compact_layout?(node)
+          cross_available -= cross_sizes.sum
+          cross_available -= cross_gap * (node.internal.lines.length - 1) if compact_layout?(node)
 
-        main_used = 0
-        children = reverse_layout?(node) ? node.children.reverse_each : node.children
-        children.each_with_index do |child, idx|
-          grow = child.style.fetch(:grow, 0)
-          if grow_fraction && grow > 0
-            size = grow.mult(grow_fraction).round
-            main_used += size
-            size += (grow_fraction * total_grow) - main_used if idx == node.children.length - 1
+          line.each do |child|
+            main_available -= horizontal_layout?(node) ? child.internal.definite_width : child.internal.definite_height
+            cross_available -= horizontal_layout?(node) ? child.internal.definite_height : child.internal.definite_width
 
-            if horizontal_layout?(node)
-              child.internal.definite_width += size
-            else
-              child.internal.definite_height += size
+            if compact_layout?(node)
+              main_available -= horizontal_layout?(node) ? child.internal.margin.horizontal : child.internal.margin.vertical
+              cross_available -= horizontal_layout?(node) ? child.internal.margin.vertical : child.internal.margin.horizontal
             end
+
+            total_grow += child.style.grow if child.style.fetch(:grow, 0) > 0
+            total_shrink += child.style.shrink if child.style.fetch(:shrink, 0) > 0
           end
 
-          child.internal.screen_x += horizontal_layout?(node) ? main_pos : cross_pos
-          child.internal.screen_y += horizontal_layout?(node) ? cross_pos : main_pos
+          grow_fraction = nil
+          if total_grow.pos?
+            grow_fraction = main_available / total_grow
+            main_available = 0
+          end
 
           case alignment_shorthand(node, :justify).content
+          when :start
+            main_pos += main_available if reverse_layout?(node)
+          when :center
+            main_pos += main_available / 2
+          when :end
+            main_pos += main_available unless reverse_layout?(node)
           when :space_around
-            main_pos += main_available / node.children.size
+            main_pos += main_available / (line.length * 2)
           when :space_between
-            main_pos += main_available / (node.children.size - 1)
+            main_pos += 0
           when :space_evenly
-            main_pos += main_available / (node.children.size + 1)
-          else
-            main_pos += horizontal_layout?(node) ? child.internal.margin.horizontal : child.internal.margin.vertical
-            main_pos += main_gap
-          end
-          main_pos += horizontal_layout?(node) ? child.internal.definite_width : child.internal.definite_height
-
-          if horizontal_layout?(node)
-            case alignment_shorthand(node, :align).self || alignment_shorthand(node, :align).items
-            when :start
-              child.internal.screen_y = cross_start
-            when :center
-              child.internal.screen_y = cross_start + (cross_content - child.internal.definite_height).half
-            when :end
-              child.internal.screen_y = cross_content - child.internal.definite_height
-            when :stretch
-              child.internal.screen_y = cross_start unless child.style.height
-              child.internal.definite_height = cross_content
-            when :space_around
-            when :space_between
-            when :space_evenly
-            end
-          else
-            case alignment_shorthand(node, :align).self || alignment_shorthand(node, :align).items
-            when :start
-              child.internal.screen_x = cross_start
-            when :center
-              child.internal.screen_x = cross_start + (cross_content - child.internal.definite_width).half
-            when :end
-              child.internal.screen_x = cross_content - child.internal.definite_width
-            when :stretch
-              child.internal.screen_x = cross_start unless child.style.width
-              child.internal.definite_width = cross_content
-            when :space_around
-            when :space_between
-            when :space_evenly
-            end
+            main_pos += main_available / (line.length + 1)
           end
 
-          # @TODO These are probably supposed to be conditional on something…
-          child.internal.screen_x += child.internal.margin.left
-          child.internal.screen_y += child.internal.margin.top
+          case alignment_shorthand(node, :align).items
+          when :start
+            cross_pos += 0
+          when :center
+            cross_pos += (cross_available - line.lazy.filter_map { |x| x.internal.screen_height }.sum) / 2
+          when :end
+            cross_pos += cross_available - line.lazy.filter_map { |x| x.internal.screen_height }.sum
+          when :stretch
+            cross_pos += 0
+          when :space_around
+            cross_pos += (cross_available - line.lazy.filter_map { |x| x.internal.screen_height }.sum) / 2
+          when :space_between
+            cross_pos += 0
+          when :space_evenly
+            cross_pos += 0
+          end
+
+          main_used = 0
+          children = reverse_layout?(node) ? line.reverse_each : line
+          children.each_with_index do |child, idx|
+            grow = child.style.fetch(:grow, 0)
+            if grow_fraction && grow > 0
+              size = grow.mult(grow_fraction).round
+              main_used += size
+              size += (grow_fraction * total_grow) - main_used if idx == line.length - 1
+
+              if horizontal_layout?(node)
+                child.internal.definite_width += size
+              else
+                child.internal.definite_height += size
+              end
+            end
+
+            child.internal.screen_x += horizontal_layout?(node) ? main_pos : cross_pos
+            child.internal.screen_y += horizontal_layout?(node) ? cross_pos : main_pos
+
+            case alignment_shorthand(node, :justify).content
+            when :space_around
+              main_pos += main_available / line.size
+            when :space_between
+              main_pos += main_available / (line.size - 1)
+            when :space_evenly
+              main_pos += main_available / (line.size + 1)
+            else
+              main_pos += horizontal_layout?(node) ? child.internal.margin.horizontal : child.internal.margin.vertical
+              main_pos += main_gap
+            end
+            main_pos += horizontal_layout?(node) ? child.internal.definite_width : child.internal.definite_height
+
+            if horizontal_layout?(node)
+              case alignment_shorthand(node, :align).self || alignment_shorthand(node, :align).items
+              when :start
+                child.internal.screen_y = cross_pos
+              when :center
+                child.internal.screen_y = cross_start + (cross_content - child.internal.definite_height).half
+              when :end
+                child.internal.screen_y = cross_content - child.internal.definite_height
+              when :stretch
+                child.internal.screen_y = cross_pos unless child.style.height
+                child.internal.definite_height = cross_content
+              when :space_around
+              when :space_between
+              when :space_evenly
+              end
+            else
+              case alignment_shorthand(node, :align).self || alignment_shorthand(node, :align).items
+              when :start
+                child.internal.screen_x = cross_pos
+              when :center
+                child.internal.screen_x = cross_start + (cross_content - child.internal.definite_width).half
+              when :end
+                child.internal.screen_x = cross_content - child.internal.definite_width
+              when :stretch
+                child.internal.screen_x = cross_pos unless child.style.width
+                child.internal.definite_width = cross_content
+              when :space_around
+              when :space_between
+              when :space_evenly
+              end
+            end
+
+            # @TODO These are probably supposed to be conditional on something…
+            child.internal.screen_x += child.internal.margin.left
+            child.internal.screen_y += child.internal.margin.top
+          end
+
+          main_pos = main_start
+          cross_pos += cross_size + cross_gap
         end
       end
 
@@ -284,6 +344,11 @@ module UI
     def compact_layout?(node)
       justify = alignment_shorthand(node, :justify)
       COMPACT_JUSTIFICATION_VALUES.include?(justify.content)
+    end
+
+    WRAPPED_LAYOUT_VALUES = [true, :wrap, :reverse, :wrap_reverse]
+    def wrapped_layout?(node)
+      WRAPPED_LAYOUT_VALUES.include?(node.style.dig(:flex, :wrap))
     end
 
     def cross_size(node)
