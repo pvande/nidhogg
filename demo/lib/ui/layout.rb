@@ -337,7 +337,7 @@ module UI
       end
     end
 
-    HORIZONTAL_LAYOUT_DIRECTIONS = [:row, :row_reverse].freeze
+    HORIZONTAL_LAYOUT_DIRECTIONS = [nil, :row, :row_reverse].freeze
     def horizontal_layout?(node)
       HORIZONTAL_LAYOUT_DIRECTIONS.include?(node.style.dig(:flex, :direction))
     end

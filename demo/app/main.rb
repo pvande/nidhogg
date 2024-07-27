@@ -67,7 +67,18 @@ module Examples
 
   example "align-content-001" do
     UI.build do
-      node(height: 100, width: 300, background: DARK_BACKGROUND, flex: { direction: :row, wrap: true }, align: { content: :center }) do
+      node(height: 100, width: 300, background: DARK_BACKGROUND, flex: { wrap: true }, align: { content: :center }) do
+        node(width: 150, height: 25, background: {r:200})
+        node(width: 150, height: 25, background: {g:200})
+        node(width: 150, height: 25, background: {b:200})
+        node(width: 150, height: 25, background: {r:200, g:200})
+      end
+    end
+  end
+
+  example "align-content-002" do
+    UI.build do
+      node(height: 100, width: 300, background: DARK_BACKGROUND, flex: { wrap: true }, align: { content: :start }) do
         node(width: 150, height: 25, background: {r:200})
         node(width: 150, height: 25, background: {g:200})
         node(width: 150, height: 25, background: {b:200})
