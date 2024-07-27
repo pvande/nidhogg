@@ -123,7 +123,7 @@ module UI
         next unless node.respond_to?(:children)
 
         lines = [[]]
-        main = cross = longest_child = 0
+        main = longest_child = 0
         node.children.each do |child|
           parent_main = horizontal_layout?(node) ? node.internal.definite_width - node.internal.padding.horizontal : node.internal.definite_height - node.internal.padding.vertical
           delta_main = horizontal_layout?(node) ? child.internal.definite_width + child.internal.padding.horizontal : child.internal.definite_height + child.internal.padding.vertical
@@ -133,14 +133,13 @@ module UI
             lines << []
 
             if horizontal_layout?(node)
-              node.internal.definite_height += length
+              # node.internal.definite_height += length
             else
               node.internal.definite_width += length
             end
 
             longest_child = 0
             main = 0
-            cross += length
           end
 
           main += delta_main
@@ -151,11 +150,12 @@ module UI
           longest_child = child_size if child_size > longest_child
         end
 
+        lines.shift if lines.first.empty?
         node.internal.lines = lines
 
         if wrapped_layout?(node)
           if horizontal_layout?(node)
-            node.internal.definite_height += longest_child
+            # node.internal.definite_height += longest_child
           else
             node.internal.definite_width += longest_child
           end
@@ -174,9 +174,10 @@ module UI
         lines = node.internal.lines
         lines = lines.reverse_each if [:reverse, :wrap_reverse].include?(node.style.dig(:flex, :wrap))
         cross_sizes = lines.map do |line|
-          line.map do |child|
+          sizes = line.map do |child|
             horizontal_layout?(node) ? child.internal.definite_height : child.internal.definite_width
-          end.max
+          end
+          sizes.max
         end
 
         lines.each_with_index do |line, idx|
@@ -191,16 +192,15 @@ module UI
           cross_content = cross_available
 
           main_available -= main_gap * (line.length - 1) if compact_layout?(node)
-          cross_available -= cross_sizes.sum
-          cross_available -= cross_gap * (node.internal.lines.length - 1) if compact_layout?(node)
 
-          line.each do |child|
+          line.each_with_index do |child, idx|
             main_available -= horizontal_layout?(node) ? child.internal.definite_width : child.internal.definite_height
             cross_available -= horizontal_layout?(node) ? child.internal.definite_height : child.internal.definite_width
 
             if compact_layout?(node)
               main_available -= horizontal_layout?(node) ? child.internal.margin.horizontal : child.internal.margin.vertical
               cross_available -= horizontal_layout?(node) ? child.internal.margin.vertical : child.internal.margin.horizontal
+              cross_available -= cross_gap unless idx.zero?
             end
 
             total_grow += child.style.grow if child.style.fetch(:grow, 0) > 0
@@ -228,21 +228,28 @@ module UI
             main_pos += main_available / (line.length + 1)
           end
 
-          case alignment_shorthand(node, :align).items
+          case alignment_shorthand(node, :align).content
           when :start
             cross_pos += 0
           when :center
-            cross_pos += (cross_available - line.lazy.filter_map { |x| x.internal.screen_height }.sum) / 2
+            cross_pos += cross_available / 2 if idx.zero?
+            # cross_pos += (cross_available - line.lazy.filter_map { |x| x.internal.screen_height }.sum) / 2
           when :end
-            cross_pos += cross_available - line.lazy.filter_map { |x| x.internal.screen_height }.sum
+            cross_pos += cross_available if idx.zero?
+            # cross_pos += cross_available - line.lazy.filter_map { |x| x.internal.screen_height }.sum
           when :stretch
             cross_pos += 0
           when :space_around
-            cross_pos += (cross_available - line.lazy.filter_map { |x| x.internal.screen_height }.sum) / 2
+            # cross_pos += (cross_available - line.lazy.filter_map { |x|
+            # x.internal.screen_height }.sum) / 2
+            gap = cross_available / lines.count
+            cross_pos += idx.zero? ? gap / 2 : gap
           when :space_between
-            cross_pos += 0
+            # cross_pos += 0
+            cross_pos += cross_available / (lines.count - 1) unless idx.zero?
           when :space_evenly
-            cross_pos += 0
+            # cross_pos += 0
+            cross_pos += scross_available / (lines.count + 1) unless idx.zero?
           end
 
           main_used = 0
