@@ -19,15 +19,17 @@ def self.tick(...)
     $state.selected_test += 1
   end
   $state.selected_test %= $state.tests.count
-  current_test = $state.tests[$state.selected_test]
+  current_test = $state.tests.keys[$state.selected_test]
 
   $state.textbox ||= Input::Multiline.new(**$layout.rect(row: 1, col: 1, w: 8, h: 10), size_px: 12)
 
   $state.textbox.value = <<~OUTPUT
+  #{$state.tests[current_test]}
+
   Tests
   -----
 
-  #{$state.tests.map { |name| "#{name == current_test ? ">" : " "} #{name}" }.join("\n")}
+  #{$state.tests.keys.map { |name| "#{name == current_test ? ">" : " "} #{name}" }.join("\n")}
   OUTPUT
 
   $state.textbox.tick
@@ -44,7 +46,7 @@ end
 def generate_screenshots
   return unless Kernel.tick_count.pos? && Kernel.tick_count.zmod?(5)
 
-  $outputs.screenshots << $state.rect.merge(path: "screenshots/#{$state.tests[$state.selected_test].tr(":/", "")}.png")
+  $outputs.screenshots << $state.rect.merge(path: "screenshots/#{$state.tests.keys[$state.selected_test]}.png")
 
   $state.selected_test += 1
   $gtk.request_quit if $state.selected_test == $state.tests.count
@@ -59,13 +61,13 @@ module Examples
   LIGHT_BACKGROUND = { r: 0xEE, g: 0xEE, b: 0xEE }
 
   attr_reader :examples
-  @examples = []
-  def self.example(name, &block)
-    @examples << name
+  @examples = {}
+  def self.example(name, message, &block)
+    @examples[name] = message
     self.define_method(name, &block)
   end
 
-  example "align-content-001" do
+  example "align-content-001", "align: { content: :center } groups all wrapping lines in the middle of their container" do
     UI.build do
       node(height: 100, width: 300, background: DARK_BACKGROUND, flex: { wrap: true }, align: { content: :center }) do
         node(width: 150, height: 25, background: {r:200})
@@ -76,7 +78,7 @@ module Examples
     end
   end
 
-  example "align-content-002" do
+  example "align-content-002", "align: { content: :start } groups all wrapping lines at the start of their container" do
     UI.build do
       node(height: 100, width: 300, background: DARK_BACKGROUND, flex: { wrap: true }, align: { content: :start }) do
         node(width: 150, height: 25, background: {r:200})
@@ -87,13 +89,46 @@ module Examples
     end
   end
 
-  example "align-content-003" do
+  example "align-content-003", "align: { content: :end } groups all wrapping lines at the end of their container" do
     UI.build do
       node(height: 100, width: 300, background: DARK_BACKGROUND, flex: { wrap: true }, align: { content: :end }) do
         node(width: 150, height: 25, background: {r:200})
         node(width: 150, height: 25, background: {g:200})
         node(width: 150, height: 25, background: {b:200})
         node(width: 150, height: 25, background: {r:200, g:200})
+      end
+    end
+  end
+
+  example "align-content-004", "align: { content: :space_between } distributes wrapping lines across their container" do
+    UI.build do
+      node(height: 100, width: 300, background: DARK_BACKGROUND, flex: { wrap: true }, align: { content: :space_between }) do
+        node(width: 150, height: 25, background: {r:200})
+        node(width: 150, height: 25, background: {g:200})
+        node(width: 150, height: 25, background: {b:200})
+        node(width: 150, height: 25, background: {r:200, g:200})
+      end
+    end
+  end
+
+  example "align-content-005", "align: { content: :space_around } distributes space to the leading and trailing edges of each wrapping line" do
+    UI.build do
+      node(height: 100, width: 300, background: DARK_BACKGROUND, flex: { wrap: true }, align: { content: :space_around }) do
+        node(width: 150, height: 22, background: {r:200})
+        node(width: 150, height: 22, background: {g:200})
+        node(width: 150, height: 22, background: {b:200})
+        node(width: 150, height: 22, background: {r:200, g:200})
+      end
+    end
+  end
+
+  example "align-content-006", "align: { content: :stretch } stretches lines to fill their container " do
+    UI.build do
+      node(height: 100, width: 300, background: DARK_BACKGROUND, flex: { wrap: true }, align: { content: :stretch }) do
+        node(id: :target, width: 150, background: {r:200})
+        node(width: 150, background: {g:200})
+        node(width: 150, background: {b:200})
+        node(width: 150, background: {r:200, g:200})
       end
     end
   end
