@@ -187,6 +187,7 @@ module UI
 
         lines.each_with_index do |line, idx|
           cross_size = cross_sizes[idx]
+          stretched = false
           total_grow = 0
           total_shrink = 0
 
@@ -199,6 +200,7 @@ module UI
             unless horizontal_layout?(node) ? child.style.height : child.style.width
               case node.style.dig(:align, :content)
               when :stretch, nil
+                stretched = true
                 if horizontal_layout?(node)
                   child.internal.definite_height = cross_size + cross_portion
                   child.internal.definite_height += cross_remainder if idx == line.length - 1
@@ -235,21 +237,20 @@ module UI
           end
 
           reversed_wrap = [:reverse, :wrap_reverse].include?(node.style.dig(:flex, :wrap))
-          cross_pos += cross_portion if reversed_wrap
           case alignment_shorthand(node, :align).content
           when :stretch, nil
-            # puts60 [cross_content, cross_size].inspect
-            # cross_pos += (cross_content / cross_sizes.length) - cross_size if reversed_wrap
+            cross_pos += cross_portion if reversed_wrap && !stretched
           when :start
-            cross_pos += cross_available if idx.zero? && reversed_wrap
+            cross_pos += 0
           when :center
             cross_pos += cross_available / 2 if idx.zero?
           when :end
-            cross_pos += cross_available if idx.zero? && !reversed_wrap
+            cross_pos += cross_available if idx.zero?
           when :space_around
             gap = cross_available / lines.count
             cross_pos += idx.zero? ? gap / 2 : gap
           when :space_between
+            cross_pos += cross_available if lines.one? && reversed_wrap
             cross_pos += cross_available / (lines.count - 1) unless idx.zero?
           when :space_evenly
             cross_pos += cross_available / (lines.count + 1)
@@ -329,7 +330,7 @@ module UI
 
           main_pos = main_start
           cross_pos += cross_gap + cross_size
-          cross_pos += cross_portion unless reversed_wrap
+          cross_pos += cross_portion if !reversed_wrap || stretched
         end
       end
 
