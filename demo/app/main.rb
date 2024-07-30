@@ -470,4 +470,55 @@ module Examples
       end
     end
   end
+
+  example "align-items-001", "align: { items: :center } centers each flex item's margin box in the cross-axis of its line" do
+    UI.build do
+      node(height: 100, width: 300, background: DARK_BACKGROUND, flex: { wrap: true }, align: { items: :center }) do
+        node(width: 150, height: 50, background: {r:200})
+        node(width: 150, height: 50, background: {g:200})
+      end
+    end
+  end
+
+  example "align-items-002", "align: { items: :flex_start } centers each flex item's margin box flush with the cross-start edge of line" do
+    UI.build do
+      node(height: 100, width: 300, background: DARK_BACKGROUND, flex: { wrap: true }, align: { items: :flex_start }) do
+        node(width: 150, height: 50, background: {r:200})
+        node(width: 150, height: 50, background: {g:200})
+      end
+    end
+  end
+
+  example "align-items-003", "align: { items: :flex_end } centers each flex item's margin box flush with the cross-end edge of line" do
+    UI.build do
+      node(height: 100, width: 300, background: DARK_BACKGROUND, flex: { wrap: true }, align: { items: :flex_end }) do
+        node(width: 150, height: 50, background: {r:200})
+        node(width: 150, height: 50, background: {g:200})
+      end
+    end
+  end
+
+  # @SKIPPED align-items-004
+  # @REASON No support for `baseline` alignment is planned.
+
+  example "align-items-005", "align: { items: :stretch } centers each flex item's margin box so that its cross size matches its line's" do
+    UI.build do
+      node(height: 100, width: 300, background: DARK_BACKGROUND, flex: { wrap: true }, align: { items: :stretch }) do
+        node(width: 150, background: {r:200})
+        node(width: 150, background: {g:200})
+      end
+    end
+  end
+
+  example "align-items-006", "align: { items: :flex_start } implies the flex item's width should fit to its content" do
+    UI.build do
+      node(height: 100, width: 300, background: DARK_BACKGROUND, flex: { direction: :column }, align: { items: :flex_start }) do
+        node(background: {r:200}) do
+          node(width: 150, height: 50, background: {g:200}, flex: { direction: :column }) do
+            text "No red showing"
+          end
+        end
+      end
+    end
+  end
 end

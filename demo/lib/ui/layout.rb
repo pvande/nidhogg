@@ -200,13 +200,17 @@ module UI
             unless horizontal_layout?(node) ? child.style.height : child.style.width
               case node.style.dig(:align, :content)
               when :stretch, nil
-                stretched = true
-                if horizontal_layout?(node)
-                  child.internal.definite_height = cross_size + cross_portion
-                  child.internal.definite_height += cross_remainder if idx == line.length - 1
-                else
-                  child.internal.definite_width = cross_size + cross_portion
-                  child.internal.definite_width += cross_remainder if idx == line.length - 1
+                $outputs.debug.watch child.style.dig(:align, :self).inspect
+                $outputs.debug.watch node.style.dig(:align, :items).inspect
+                if [:stretch, nil].include?(child.style.dig(:align, :self) || node.style.dig(:align, :items))
+                  stretched = true
+                  if horizontal_layout?(node)
+                    child.internal.definite_height = cross_size + cross_portion
+                    child.internal.definite_height += cross_remainder if idx == line.length - 1
+                  else
+                    child.internal.definite_width = cross_size + cross_portion
+                    child.internal.definite_width += cross_remainder if idx == line.length - 1
+                  end
                 end
               end
             end
@@ -305,6 +309,18 @@ module UI
               when :space_around
               when :space_between
               when :space_evenly
+              when :flex_start
+                if reverse_layout?(node)
+                  child.internal.screen_y = cross_content - child.internal.definite_height
+                else
+                  child.internal.screen_y = cross_pos
+                end
+              when :flex_end
+                if reverse_layout?(node)
+                  child.internal.screen_y = cross_pos
+                else
+                  child.internal.screen_y = cross_content - child.internal.definite_height
+                end
               end
             else
               case alignment_shorthand(node, :align).self || alignment_shorthand(node, :align).items
@@ -320,6 +336,18 @@ module UI
               when :space_around
               when :space_between
               when :space_evenly
+              when :flex_start
+                if reverse_layout?(node)
+                  child.internal.screen_x = cross_content - child.internal.definite_width
+                else
+                  child.internal.screen_x = cross_pos
+                end
+              when :flex_end
+                if reverse_layout?(node)
+                  child.internal.screen_x = cross_pos
+                else
+                  child.internal.screen_x = cross_content - child.internal.definite_width
+                end
               end
             end
 
@@ -388,7 +416,7 @@ module UI
       end
     end
 
-    def alignment_shorthand(node, property, default = :start)
+    def alignment_shorthand(node, property, default = nil)
       value = node.style[property]
 
       hash = case value
