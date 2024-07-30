@@ -321,4 +321,93 @@ module Examples
       end
     end
   end
+
+  # # @FIXME `max_height` support.
+  # example "align-content-vert-001b", "testing 1-3 flex lines within vertical flex containers with each possible value of the 'align-content' property and no explicit height" do
+  #   container = {
+  #     width: 200,
+  #     max_height: 10,
+  #     flex: { direction: :column, wrap: true },
+  #     margin: { bottom: 2 },
+  #     background: { r: 200, g: 200, b: 200 },
+  #   }
+
+  #   child_a = { width: 10, height: 10, background: { r: 200 } }
+  #   child_b = { height: 10, background: { g: 200 } }
+  #   grandchild = { width: 30, height: 5, background: { r: 200, b: 200 }}
+  #   child_c = { width: 40, height: 10, background: { b: 200 } }
+
+  #   alignments = [
+  #     nil,
+  #     :flex_start,
+  #     :flex_end,
+  #     :center,
+  #     :space_between,
+  #     :space_around,
+  #     :space_evenly,
+  #     :start,
+  #     :end,
+  #   ]
+
+  #   UI.build(flex: { direction: :column }) do
+  #     alignments.each do |alignment|
+  #       node(**container, align: { content: alignment }) do
+  #         node(**child_a)
+  #       end
+  #       node(**container, align: { content: alignment }) do
+  #         node(**child_a)
+  #         node(**child_b) { node(**grandchild) }
+  #       end
+  #       node(**container, align: { content: alignment }) do
+  #         node(**child_a)
+  #         node(**child_b) { node(**grandchild) }
+  #         node(**child_c)
+  #       end
+  #     end
+  #   end
+  # end
+
+  example "align-content-vert-002", "testing 1-3 flex lines within vertical { wrap: :reverse } flex containers with each possible value of the 'align-content' property" do
+    container = {
+      width: 200,
+      height: 10,
+      flex: { direction: :column, wrap: :reverse },
+      margin: { bottom: 2 },
+      background: { r: 200, g: 200, b: 200 },
+    }
+
+    child_a = { width: 10, height: 10, background: { r: 200 } }
+    child_b = { height: 10, background: { g: 200 } }
+    grandchild = { width: 30, height: 5, background: { r: 200, b: 200 }}
+    child_c = { width: 40, height: 10, background: { b: 200 } }
+
+    alignments = [
+      nil,
+      :flex_start,
+      :flex_end,
+      :center,
+      :space_between,
+      :space_around,
+      :space_evenly,
+      :start,
+      :end,
+    ]
+
+    UI.build(flex: { direction: :column }) do
+      alignments.each do |alignment|
+        node(**container, align: { content: alignment }) do
+          node(**child_a)
+        end
+        node(**container, align: { content: alignment }) do
+          node(**child_a)
+          node(**child_b) { node(**grandchild) }
+        end
+        node(**container, align: { content: alignment }) do
+          node(**child_a)
+          node(**child_b) { node(**grandchild) }
+          node(**child_c)
+        end
+      end
+    end
+  end
 end
