@@ -410,4 +410,64 @@ module Examples
       end
     end
   end
+
+  example "align-content_center", "renders three contiguous boxes in the middle left of their container" do
+    UI.build do
+      node(height: 200, width: 80, background: DARK_BACKGROUND, flex: { wrap: true }, align: { content: :center }) do
+        node(width: 50, height: 50, background: {r:200})
+        node(width: 50, height: 50, background: {g:200})
+        node(width: 50, height: 50, background: {b:200})
+      end
+    end
+  end
+
+  example "align-content_flex-end", "renders three contiguous boxes in the bottom left of their container" do
+    UI.build do
+      node(height: 200, width: 80, background: DARK_BACKGROUND, flex: { wrap: true }, align: { content: :flex_end }) do
+        node(width: 50, height: 50, background: {r:200})
+        node(width: 50, height: 50, background: {g:200})
+        node(width: 50, height: 50, background: {b:200})
+      end
+    end
+  end
+
+  example "align-content_flex-start", "renders three contiguous boxes in the upper left of their container" do
+    UI.build do
+      node(height: 200, width: 80, background: DARK_BACKGROUND, flex: { wrap: true }, align: { content: :flex_start }) do
+        node(width: 50, height: 50, background: {r:200})
+        node(width: 50, height: 50, background: {g:200})
+        node(width: 50, height: 50, background: {b:200})
+      end
+    end
+  end
+
+  example "align-content_space-around", "renders three boxes and the gap between the boxes and the container edge is half the size of the gap between boxes" do
+    UI.build do
+      node(height: 200, width: 80, background: DARK_BACKGROUND, flex: { wrap: true }, align: { content: :space_around }) do
+        node(width: 50, height: 50, background: {r:200})
+        node(width: 50, height: 50, background: {g:200})
+        node(width: 50, height: 50, background: {b:200})
+      end
+    end
+  end
+
+  example "align-content_space-between", "renders three boxes with no gap between the boxes and the container edge and equally sized gaps between boxes" do
+    UI.build do
+      node(height: 200, width: 80, background: DARK_BACKGROUND, flex: { wrap: true }, align: { content: :space_between }) do
+        node(width: 50, height: 50, background: {r:200})
+        node(width: 50, height: 50, background: {g:200})
+        node(width: 50, height: 50, background: {b:200})
+      end
+    end
+  end
+
+  example "align-content_stretch", "renders three boxes with no gap between the first box and the container edge and equal gaps after each box" do
+    UI.build do
+      node(height: 200, width: 80, background: DARK_BACKGROUND, flex: { wrap: true }, align: { content: :stretch }) do
+        node(width: 50, height: 50, background: {r:200})
+        node(width: 50, height: 50, background: {g:200})
+        node(width: 50, height: 50, background: {b:200})
+      end
+    end
+  end
 end
