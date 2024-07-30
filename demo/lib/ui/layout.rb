@@ -83,7 +83,9 @@ module UI
         end
 
         # @NOTE `children` needs to be sorted by `order`, then index.
-        queue += node.children if node.respond_to?(:children)
+        if node.respond_to?(:children)
+          queue += reverse_layout?(node) ? node.children.reverse_each : node.children
+        end
 
         idx += 1
       end
@@ -173,12 +175,13 @@ module UI
 
         cross_available -= cross_sizes.sum
 
+        cross_portion = 0
+        cross_remainder = 0
         if cross_available.pos? && cross_sizes.any?
           case node.style.dig(:align, :content)
           when :stretch, nil
             cross_portion = cross_available.fdiv(cross_sizes.length).floor
-            cross_sizes.map! { |size| size + cross_portion }
-            cross_sizes[-1] = cross_sizes.last + cross_available - cross_portion.mult(cross_sizes.length)
+            cross_remainder = cross_available - cross_portion.mult(cross_sizes.length)
           end
         end
 
@@ -197,9 +200,11 @@ module UI
               case node.style.dig(:align, :content)
               when :stretch, nil
                 if horizontal_layout?(node)
-                  child.internal.definite_height = cross_size
+                  child.internal.definite_height = cross_size + cross_portion
+                  child.internal.definite_height += cross_remainder if idx == line.length - 1
                 else
-                  child.internal.definite_width = cross_size
+                  child.internal.definite_width = cross_size + cross_portion
+                  child.internal.definite_width += cross_remainder if idx == line.length - 1
                 end
               end
             end
@@ -229,13 +234,18 @@ module UI
             main_pos += main_available / (line.length + 1)
           end
 
+          reversed_wrap = [:reverse, :wrap_reverse].include?(node.style.dig(:flex, :wrap))
+          cross_pos += cross_portion if reversed_wrap
           case alignment_shorthand(node, :align).content
-          when :start, :stretch
-            cross_pos += 0
+          when :stretch, nil
+            # puts60 [cross_content, cross_size].inspect
+            # cross_pos += (cross_content / cross_sizes.length) - cross_size if reversed_wrap
+          when :start
+            cross_pos += cross_available if idx.zero? && reversed_wrap
           when :center
             cross_pos += cross_available / 2 if idx.zero?
           when :end
-            cross_pos += cross_available if idx.zero?
+            cross_pos += cross_available if idx.zero? && !reversed_wrap
           when :space_around
             gap = cross_available / lines.count
             cross_pos += idx.zero? ? gap / 2 : gap
@@ -243,11 +253,14 @@ module UI
             cross_pos += cross_available / (lines.count - 1) unless idx.zero?
           when :space_evenly
             cross_pos += cross_available / (lines.count + 1)
+          when :flex_start
+            cross_pos += cross_available if idx.zero? && reversed_wrap
+          when :flex_end
+            cross_pos += cross_available if idx.zero? && !reversed_wrap
           end
 
           main_used = 0
-          children = reverse_layout?(node) ? line.reverse_each : line
-          children.each_with_index do |child, idx|
+          line.each_with_index do |child, idx|
             grow = child.style.fetch(:grow, 0)
             if grow_fraction && grow > 0
               size = grow.mult(grow_fraction).round
@@ -315,7 +328,8 @@ module UI
           end
 
           main_pos = main_start
-          cross_pos += cross_size + cross_gap
+          cross_pos += cross_gap + cross_size
+          cross_pos += cross_portion unless reversed_wrap
         end
       end
 

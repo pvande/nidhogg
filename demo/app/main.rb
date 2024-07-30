@@ -161,12 +161,14 @@ module Examples
 
     alignments = [
       nil,
-      :start,
-      :end,
+      :flex_start,
+      :flex_end,
       :center,
       :space_between,
       :space_around,
       :space_evenly,
+      :start,
+      :end,
     ]
 
     UI.build do
@@ -204,12 +206,14 @@ module Examples
 
   #   alignments = [
   #     nil,
-  #     :start,
-  #     :end,
+  #     :flex_start,
+  #     :flex_end,
   #     :center,
   #     :space_between,
   #     :space_around,
   #     :space_evenly,
+  #     :start,
+  #     :end,
   #   ]
 
   #   UI.build do
