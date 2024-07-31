@@ -200,8 +200,6 @@ module UI
             unless horizontal_layout?(node) ? child.style.height : child.style.width
               case node.style.dig(:align, :content)
               when :stretch, nil
-                $outputs.debug.watch child.style.dig(:align, :self).inspect
-                $outputs.debug.watch node.style.dig(:align, :items).inspect
                 if [:stretch, nil].include?(child.style.dig(:align, :self) || node.style.dig(:align, :items))
                   stretched = true
                   if horizontal_layout?(node)
@@ -296,7 +294,7 @@ module UI
             main_pos += horizontal_layout?(node) ? child.internal.definite_width : child.internal.definite_height
 
             if horizontal_layout?(node)
-              case alignment_shorthand(node, :align).self || alignment_shorthand(node, :align).items
+              case alignment_shorthand(child, :align).self || alignment_shorthand(node, :align).items
               when :start
                 child.internal.screen_y = cross_pos
               when :center
@@ -304,8 +302,10 @@ module UI
               when :end
                 child.internal.screen_y = cross_content - child.internal.definite_height
               when :stretch
-                child.internal.screen_y = cross_pos unless child.style.height
-                child.internal.definite_height = cross_content
+                unless child.style.height
+                  child.internal.screen_y = cross_pos
+                  child.internal.definite_height = cross_content
+                end
               when :space_around
               when :space_between
               when :space_evenly
@@ -323,7 +323,7 @@ module UI
                 end
               end
             else
-              case alignment_shorthand(node, :align).self || alignment_shorthand(node, :align).items
+              case alignment_shorthand(child, :align).self || alignment_shorthand(node, :align).items
               when :start
                 child.internal.screen_x = cross_pos
               when :center
@@ -331,8 +331,10 @@ module UI
               when :end
                 child.internal.screen_x = cross_content - child.internal.definite_width
               when :stretch
-                child.internal.screen_x = cross_pos unless child.style.width
-                child.internal.definite_width = cross_content
+                unless child.style.width
+                  child.internal.screen_x = cross_pos
+                  child.internal.definite_width = cross_content
+                end
               when :space_around
               when :space_between
               when :space_evenly

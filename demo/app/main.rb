@@ -521,4 +521,131 @@ module Examples
       end
     end
   end
+
+  example "align-self-001", "align: { self: :flex_start } aligns the flex items to the start edge of cross axis" do
+    UI.build do
+      node(height: 100, width: 100, background: DARK_BACKGROUND) do
+        node(width: 25, height: 50, align: { self: :flex_start }, background: {r:200})
+        node(width: 25, height: 50, align: { self: :flex_start }, background: {g:200})
+        node(width: 25, height: 50, align: { self: :flex_start }, background: {b:200})
+        node(width: 25, height: 50, align: { self: :flex_start }, background: {r:200, g:200})
+      end
+    end
+  end
+
+  example "align-self-002", "align: { self: :flex_end } aligns the flex items to the end edge of cross axis" do
+    UI.build do
+      node(height: 100, width: 100, background: DARK_BACKGROUND) do
+        node(width: 25, height: 50, align: { self: :flex_end }, background: {r:200})
+        node(width: 25, height: 50, align: { self: :flex_end }, background: {g:200})
+        node(width: 25, height: 50, align: { self: :flex_end }, background: {b:200})
+        node(width: 25, height: 50, align: { self: :flex_end }, background: {r:200, g:200})
+      end
+    end
+  end
+
+  example "align-self-003", "align: { self: :center } aligns the flex items to the center of cross axis" do
+    UI.build do
+      node(height: 100, width: 100, background: DARK_BACKGROUND) do
+        node(width: 25, height: 50, align: { self: :center }, background: {r:200})
+        node(width: 25, height: 50, align: { self: :center }, background: {g:200})
+        node(width: 25, height: 50, align: { self: :center }, background: {b:200})
+        node(width: 25, height: 50, align: { self: :center }, background: {r:200, g:200})
+      end
+    end
+  end
+
+  example "align-self-004", "align: { self: :stretch } makes the flex items fill the cross axis" do
+    UI.build do
+      node(height: 100, width: 100, background: DARK_BACKGROUND) do
+        node(width: 25, align: { self: :stretch }, background: {r:200})
+        node(width: 25, align: { self: :stretch }, background: {g:200})
+        node(width: 25, align: { self: :stretch }, background: {b:200})
+        node(width: 25, align: { self: :stretch }, background: {r:200, g:200})
+      end
+    end
+  end
+
+  example "align-self-005", "align: { self: :stretch } does not stretch items with an exact cross axis size" do
+    UI.build do
+      node(height: 100, width: 100, background: DARK_BACKGROUND) do
+        node(width: 25, height: 50, align: { self: :stretch }, background: {r:200})
+        node(width: 25, height: 50, align: { self: :stretch }, background: {g:200})
+        node(width: 25, height: 50, align: { self: :stretch }, background: {b:200})
+        node(width: 25, height: 50, align: { self: :stretch }, background: {r:200, g:200})
+      end
+    end
+  end
+
+  # @SKIPPED align-self-006
+  # @REASON No support for `baseline` alignment is planned.
+
+  example "align-self-007", "align: { self: nil } aligns flex items to the start edge of the cross-axis when the parent is set to align: { items: :flex-start }" do
+    UI.build do
+      node(height: 100, width: 100, background: DARK_BACKGROUND, align: { items: :flex_start }) do
+        node(width: 25, height: 50, align: { self: nil }, background: {r:200})
+        node(width: 25, height: 50, align: { self: nil }, background: {g:200})
+        node(width: 25, height: 50, align: { self: nil }, background: {b:200})
+        node(width: 25, height: 50, align: { self: nil }, background: {r:200, g:200})
+      end
+    end
+  end
+
+  example "align-self-008", "align: { self: nil } aligns flex items to the end edge of the cross-axis when the parent is set to align: { items: :flex-end }" do
+    UI.build do
+      node(height: 100, width: 100, background: DARK_BACKGROUND, align: { items: :flex_end }) do
+        node(width: 25, height: 50, align: { self: nil }, background: {r:200})
+        node(width: 25, height: 50, align: { self: nil }, background: {g:200})
+        node(width: 25, height: 50, align: { self: nil }, background: {b:200})
+        node(width: 25, height: 50, align: { self: nil }, background: {r:200, g:200})
+      end
+    end
+  end
+
+  example "align-self-009", "align: { self: nil } aligns flex items to the center of the cross-axis when the parent is set to align: { items: :center }" do
+    UI.build do
+      node(height: 100, width: 100, background: DARK_BACKGROUND, align: { items: :center }) do
+        node(width: 25, height: 50, align: { self: nil }, background: {r:200})
+        node(width: 25, height: 50, align: { self: nil }, background: {g:200})
+        node(width: 25, height: 50, align: { self: nil }, background: {b:200})
+        node(width: 25, height: 50, align: { self: nil }, background: {r:200, g:200})
+      end
+    end
+  end
+
+  # @SKIPPED align-self-010
+  # @REASON No support for `baseline` alignment is planned.
+
+  example "align-self-011", "align: { self: nil } stretches the items across the cross-axis when the parent is set to align: { items: :stretch }" do
+    UI.build do
+      node(height: 100, width: 100, background: DARK_BACKGROUND, align: { items: :stretch }) do
+        node(width: 25, align: { self: nil }, background: {r:200})
+        node(width: 25, align: { self: nil }, background: {g:200})
+        node(width: 25, align: { self: nil }, background: {b:200})
+        node(width: 25, align: { self: nil }, background: {r:200, g:200})
+      end
+    end
+  end
+
+  example "align-self-012", "not setting align: { :self } stretches the items across the cross-axis when the parent is set to align: { items: :stretch }" do
+    UI.build do
+      node(height: 100, width: 100, background: DARK_BACKGROUND, align: { items: :stretch }) do
+        node(width: 25, background: {r:200})
+        node(width: 25, background: {g:200})
+        node(width: 25, background: {b:200})
+        node(width: 25, background: {r:200, g:200})
+      end
+    end
+  end
+
+  example "align-self-013", "align: { :self } applies to children of a flex container" do
+    UI.build do
+      node(height: 100, width: 100, background: DARK_BACKGROUND, align: { items: :flex_start, self: :flex_end }) do
+        node(width: 25, height: 50, background: {r:200})
+        node(width: 25, height: 50, background: {g:200})
+        node(width: 25, height: 50, background: {b:200})
+        node(width: 25, height: 50, background: {r:200, g:200})
+      end
+    end
+  end
 end
