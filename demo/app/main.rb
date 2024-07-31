@@ -648,4 +648,16 @@ module Examples
       end
     end
   end
+
+  example "auto-height-column-with-border-and-padding", "Tests that auto-height column flexboxes with border and padding correctly size their height to their content." do
+    UI.build(flex: { direction: :column }) do
+      node(border: { width: 5, color: :salmon }, padding: 5, flex: { direction: :column }) do
+        node(min_height: 10, flex: { grow: 1 }) do
+          # @NOTE The `width` here works around an assumption in the source test
+          #       that nodes are implicitly 100% the width of their container.
+          node(width: 50, height: 50, background: :pink)
+        end
+      end
+    end
+  end
 end

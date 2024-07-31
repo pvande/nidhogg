@@ -53,7 +53,24 @@ module UI
         node.internal.gap = axis_shorthand(node, :gap)
         node.internal.margin = cardinal_shorthand(node, :margin)
         node.internal.padding = cardinal_shorthand(node, :padding)
+        node.internal.border = { width: 0, color: {} }
         node.internal.typeface = {}
+
+        # Determine the border metrics.
+        case node.style.dig(:border)
+        when Integer
+          node.internal.border.width = node.style.dig(:border)
+        when Hash
+          node.internal.border.width = node.style.dig(:border, :width) || 1
+          if node.style.dig(:border).key?(:color)
+            node.internal.border.color = node.style.dig(:border, :color)
+          else
+            node.internal.border.color = node.style.dig(:border)
+          end
+        when Symbol
+          node.internal.border.width = 1
+          node.internal.border.color = node.style.dig(:border)
+        end
 
         # Determine the inherited font.
         node.internal.typeface.font = case
@@ -111,14 +128,14 @@ module UI
           horizontal_layout?(node) ? sizes.max || 0 : sizes.sum + node.internal.gap.vertical * (node.children.length - 1)
         end
 
-        node.internal.definite_width += node.internal.padding.horizontal
-        node.internal.definite_height += node.internal.padding.vertical
+        node.internal.definite_width += node.internal.border.width.mult(2) + node.internal.padding.horizontal
+        node.internal.definite_height += node.internal.border.width.mult(2) + node.internal.padding.vertical
 
         if wrapped_layout?(node)
           if horizontal_layout?(node)
-            node.internal.definite_height = node.internal.padding.vertical if node.style.height.nil?
+            node.internal.definite_height = node.internal.border.width.mult(2) + node.internal.padding.vertical if node.style.height.nil?
           else
-            node.internal.definite_width = node.internal.padding.horizontal if node.style.width.nil?
+            node.internal.definite_width = node.internal.border.width.mult(2) + node.internal.padding.horizontal if node.style.width.nil?
           end
         end
 
@@ -127,8 +144,8 @@ module UI
         lines = [[]]
         main = longest_child = 0
         node.children.each do |child|
-          parent_main = horizontal_layout?(node) ? node.internal.definite_width - node.internal.padding.horizontal : node.internal.definite_height - node.internal.padding.vertical
-          delta_main = horizontal_layout?(node) ? child.internal.definite_width + child.internal.padding.horizontal : child.internal.definite_height + child.internal.padding.vertical
+          parent_main = horizontal_layout?(node) ? node.internal.definite_width - node.internal.border.width.mult(2) - node.internal.padding.horizontal : node.internal.definite_height - node.internal.border.width.mult(2) - node.internal.padding.vertical
+          delta_main = horizontal_layout?(node) ? child.internal.definite_width + child.internal.border.width.mult(2) + child.internal.padding.horizontal : child.internal.definite_height + child.internal.border.width.mult(2) + child.internal.padding.vertical
 
           if wrapped_layout?(node) && main + delta_main > parent_main
             length = longest_child + (horizontal_layout?(node) ? node.internal.gap.column : node.internal.gap.row)
@@ -152,8 +169,8 @@ module UI
       queue.each do |node|
         next if node.is_a?(::UI::TextNode)
 
-        main_pos = main_start = horizontal_layout?(node) ? node.internal.screen_x + node.internal.padding.left : node.internal.screen_y + node.internal.padding.top
-        cross_pos = cross_start = horizontal_layout?(node) ? node.internal.screen_y + node.internal.padding.top : node.internal.screen_x + node.internal.padding.left
+        main_pos = main_start = horizontal_layout?(node) ? node.internal.screen_x + node.internal.border.width + node.internal.padding.left : node.internal.screen_y + node.internal.border.width + node.internal.padding.top
+        cross_pos = cross_start = horizontal_layout?(node) ? node.internal.screen_y + node.internal.border.width + node.internal.padding.top : node.internal.screen_x + node.internal.border.width + node.internal.padding.left
 
         main_gap = horizontal_layout?(node) ? node.internal.gap.horizontal : node.internal.gap.vertical
         cross_gap = horizontal_layout?(node) ? node.internal.gap.vertical : node.internal.gap.horizontal
