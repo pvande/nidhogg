@@ -715,4 +715,15 @@ module Examples
       end
     end
   end
+
+  example "css-flexbox-height-animation-stretch", "The test passes if you keep seeing a green rectangle and no red." do
+    UI.build(flex: { direction: :column }) do
+      node(width: 200, background: :red) do
+        node(width: 50, background: :blue) { node(height: 75 + Math.sin(Kernel.tick_count / 20).mult(25).round) }
+        node(width: 50, background: :green) { node(height: 50) }
+        node(width: 50, background: :yellow) { node(height: 50) }
+        node(width: 50, background: :purple) { node(height: 50) }
+      end
+    end
+  end
 end
