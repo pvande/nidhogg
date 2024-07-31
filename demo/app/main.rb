@@ -46,7 +46,7 @@ end
 def generate_screenshots
   return unless Kernel.tick_count.pos? && Kernel.tick_count.zmod?(5)
 
-  $outputs.screenshots << $state.rect.merge(path: "screenshots/#{$state.tests.keys[$state.selected_test]}.png")
+  $outputs.screenshots << $state.rect.merge(path: "screenshots/#{$state.tests.keys[$state.selected_test]}.png", r: 1)
 
   $state.selected_test += 1
   $gtk.request_quit if $state.selected_test == $state.tests.count
@@ -66,6 +66,14 @@ module Examples
     @examples[name] = message
     self.define_method(name, &block)
   end
+
+  # @SKIPPED abspos-autopos-htb-ltr
+	# @SKIPPED abspos-autopos-htb-rtl
+	# @SKIPPED abspos-autopos-vlr-ltr
+	# @SKIPPED abspos-autopos-vlr-rtl
+	# @SKIPPED abspos-autopos-vrl-ltr
+	# @SKIPPED abspos-autopos-vrl-rtl
+  # @REASON No support for writing direction is planned.
 
   example "align-content-001", "align: { content: :center } groups all wrapping lines in the middle of their container" do
     UI.build do
@@ -657,6 +665,53 @@ module Examples
           #       that nodes are implicitly 100% the width of their container.
           node(width: 50, height: 50, background: :pink)
         end
+      end
+    end
+  end
+
+  # @SKIPPED auto-height-with-flex
+  # @REASON We don't implement a shorthand `flex` property.
+
+  # @SKIPPED calc-rounds-to-integer
+  # @REASON We don't support CSS `calc()`.
+
+  example "column-flex-child-with-overflow-scroll", "This test ensures children of flexbox with flex-direction: column|column-reverse does not shrink their height after applying the overflow: scroll style." do
+    UI.build(gap: 10) do
+      node(flex: { direction: :column }) do
+        node(width: 100, height: 75, border: { width: 2, color: :red }, padding: 5)
+        node(width: 100, height: 75, border: { width: 2, color: :red }, padding: 5, overflow: :scroll)
+      end
+      node(flex: { direction: :column_reverse }) do
+        node(width: 100, height: 75, border: { width: 2, color: :red }, padding: 5, overflow: :scroll)
+        node(width: 100, height: 75, border: { width: 2, color: :red }, padding: 5)
+      end
+    end
+  end
+
+  # @SKIPPED columns-height-set-via-top-bottom
+  # @REASON No support for positioning.
+
+  # @SKIPPED contain-layout-baseline-002
+  # @SKIPPED contain-layout-suppress-baseline-001
+  # @SKIPPED contain-layout-suppress-baseline-002
+  # @REASON No support for `baseline` alignment is planned.
+
+  # @SKIPPED content-height-with-scrollbars
+  # @SKIPPED cross-axis-scrollbar
+  # @REASON No support for scrollbars.
+
+  example "css-box-justify-content", "This test passes if the black box's position is at the end" do
+    UI.build do
+      node(width: 300, height: 40, background: :green, justify: { content: :flex_end }) do
+        node(width: 50, height: 30, background: :white)
+        text " "
+        node(width: 50, height: 30, background: :lightgrey)
+        text " "
+        node(width: 50, height: 30, background: :darkgrey)
+        text " "
+        node(width: 50, height: 30, background: :grey)
+        text " "
+        node(width: 50, height: 30, background: :black)
       end
     end
   end

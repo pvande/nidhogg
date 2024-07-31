@@ -241,11 +241,11 @@ module UI
           end
 
           case alignment_shorthand(node, :justify).content
-          when :start
+          when :start, :flex_start
             main_pos += main_available if reverse_layout?(node)
           when :center
             main_pos += main_available / 2
-          when :end
+          when :end, :flex_end
             main_pos += main_available unless reverse_layout?(node)
           when :space_around
             main_pos += main_available / (line.length * 2)
