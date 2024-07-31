@@ -177,6 +177,8 @@ module UI
 
         main_available = horizontal_layout?(node) ? node.internal.definite_width - node.internal.padding.horizontal : node.internal.definite_height - node.internal.padding.vertical
         cross_available = horizontal_layout?(node) ? node.internal.definite_height - node.internal.padding.vertical : node.internal.definite_width - node.internal.padding.horizontal
+        main_available -= node.internal.border.width.mult(2)
+        cross_available -= node.internal.border.width.mult(2)
 
         main_content = main_available
         cross_content = cross_available

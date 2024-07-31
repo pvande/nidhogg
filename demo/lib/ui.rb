@@ -139,12 +139,16 @@ module UI
     end
 
     def draw_override(ffi)
+      color = @internal.color
+      color = UI::Colors[color] if color.is_a?(Symbol)
+      color ||= {}
+
       $gtk.draw_label({
         x: @internal.screen_x,
         y: @internal.screen_y,
         text: @text,
         **@internal.typeface,
-        **(@internal.color || {}),
+        **color,
         vertical_alignment_enum: 0,
       })
     end
