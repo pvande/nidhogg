@@ -719,7 +719,7 @@ module UI
       REVERSE_LAYOUT_DIRECTIONS.include?(node.style.dig(:flex, :direction))
     end
 
-    COMPACT_JUSTIFICATION_VALUES = [:start, :center, :end].freeze
+    COMPACT_JUSTIFICATION_VALUES = [nil, :start, :center, :end].freeze
     def positional_alignment?(node)
       justify = alignment_shorthand(node, :justify)
       COMPACT_JUSTIFICATION_VALUES.include?(justify.content)
