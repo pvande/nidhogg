@@ -2,7 +2,6 @@ $gtk.disable_nil_punning!
 
 require "lib/input"
 require "lib/ui"
-require "lib/ui/layout"
 
 def self.tick(...)
   if Kernel.tick_count.zero?
@@ -723,6 +722,159 @@ module Examples
         node(width: 50, background: :green) { node(height: 50) }
         node(width: 50, background: :yellow) { node(height: 50) }
         node(width: 50, background: :purple) { node(height: 50) }
+      end
+    end
+  end
+
+
+  # @SKIPPED css-flexbox-img-expand-evenly
+  # @SKIPPED css-flexbox-row-reverse-wrap-reverse
+  # @SKIPPED css-flexbox-row-reverse-wrap
+  # @SKIPPED css-flexbox-row-reverse
+  # @SKIPPED css-flexbox-row-wrap-reverse
+  # @SKIPPED css-flexbox-row-wrap
+  # @SKIPPED css-flexbox-row
+  # @SKIPPED css-flexbox-test1
+  # @SKIPPED direction-upright-002
+  # @SKIPPED display-flex-001
+  # @SKIPPED display_flex_exist
+  # @SKIPPED display_inline-flex_exist
+  # @SKIPPED dynamic-baseline-change-nested
+  # @SKIPPED dynamic-baseline-change
+  # @SKIPPED flex-001
+  # @SKIPPED flex-002
+  # @SKIPPED flex-003
+  # @SKIPPED flex-004
+  # @SKIPPED flex-align-content-center
+  # @SKIPPED flex-align-content-end
+  # @SKIPPED flex-align-content-space-around
+  # @SKIPPED flex-align-content-space-between
+  # @SKIPPED flex-align-content-start
+  # @SKIPPED flex-aspect-ratio-019
+  # @SKIPPED flex-aspect-ratio-020
+  # @SKIPPED flex-aspect-ratio-021
+  # @SKIPPED flex-aspect-ratio-022
+  # @SKIPPED flex-aspect-ratio-023
+  # @SKIPPED flex-aspect-ratio-024
+  # @SKIPPED flex-aspect-ratio-img-column-001
+  # @SKIPPED flex-aspect-ratio-img-column-002
+  # @SKIPPED flex-aspect-ratio-img-column-003
+  # @SKIPPED flex-aspect-ratio-img-column-016
+  # @SKIPPED flex-aspect-ratio-img-row-001
+  # @SKIPPED flex-aspect-ratio-img-row-002
+  # @SKIPPED flex-aspect-ratio-img-row-003
+  # @SKIPPED flex-aspect-ratio-img-row-012
+  # @SKIPPED flex-aspect-ratio-img-row-014
+  # @SKIPPED flex-base
+  # @SKIPPED flex-basis-001
+  # @SKIPPED flex-basis-002
+  # @SKIPPED flex-basis-003
+  # @SKIPPED flex-basis-004
+  # @SKIPPED flex-basis-005
+  # @SKIPPED flex-basis-006
+  # @SKIPPED flex-basis-007
+  # @SKIPPED flex-basis-008
+  # @SKIPPED flex-basis-009
+  # @SKIPPED flex-basis-010
+  # @SKIPPED flex-basis-011
+  # @SKIPPED flex-basis-composition
+  # @SKIPPED flex-basis-interpolation
+  # @SKIPPED flex-box-wrap
+  # @SKIPPED flex-column-relayout-assert
+  # @SKIPPED flex-container-margin
+  # @SKIPPED flex-direction-column-001-visual
+  # @SKIPPED flex-direction-column-reverse-001-visual
+  # @SKIPPED flex-direction-column-reverse-002-visual
+  # @SKIPPED flex-direction-column-reverse
+  # @SKIPPED flex-direction-column
+  # @SKIPPED flex-direction-modify
+  # @SKIPPED flex-direction-row-001-visual
+  # @SKIPPED flex-direction-row-002-visual
+  # @SKIPPED flex-direction-row-reverse-001-visual
+  # @SKIPPED flex-direction-row-reverse-002-visual
+  # @SKIPPED flex-direction-row-reverse
+  # @SKIPPED flex-direction-row-vertical
+  # @SKIPPED flex-direction-with-element-insert
+  # @SKIPPED flex-direction
+  # @SKIPPED flex-factor-less-than-one
+  # @SKIPPED flex-flexitem-childmargin
+  # @SKIPPED flex-flexitem-percentage-prescation
+  # @SKIPPED flex-flow-001
+  # @SKIPPED flex-flow-002
+  # @SKIPPED flex-flow-003
+  # @SKIPPED flex-flow-004
+  # @SKIPPED flex-flow-005
+  # @SKIPPED flex-flow-006
+  # @SKIPPED flex-flow-007
+  # @SKIPPED flex-flow-008
+  # @SKIPPED flex-flow-009
+  # @SKIPPED flex-flow-010
+  # @SKIPPED flex-flow-011
+  # @SKIPPED flex-flow-012
+  # @SKIPPED flex-flow-013
+  # @REASON Time.
+
+  example "flex-grow-001", "'grow' property specifies the flex grow factor" do
+    UI.build do
+      node(width: 240, height: 60, background: DARK_BACKGROUND) do
+        node(width: 30, height: 60, grow: 0, background: {r:200})
+        node(width: 30, height: 60, grow: 1, background: {g:200})
+        node(width: 30, height: 60, grow: 2, background: {b:200})
+      end
+    end
+  end
+
+  example "flex-grow-002", "'grow' defaults to '0', which retains main-axis size" do
+    UI.build do
+      node(width: 240, height: 60, background: DARK_BACKGROUND) do
+        node(width: 30, height: 60, grow: 1, background: {r:200})
+        node(width: 30, height: 60, grow: 0, background: {g:200})
+        node(width: 30, height: 60, background: {b:200})
+      end
+    end
+  end
+
+  example "flex-grow-003", "negative 'grow' values are treated as invalid" do
+    UI.build do
+      node(width: 240, height: 60, background: DARK_BACKGROUND) do
+        node(width: 30, height: 60, grow: -1, background: {r:200})
+        node(width: 30, height: 60, grow: -2, background: {g:200})
+        node(width: 30, height: 60, grow: -3, background: {b:200})
+      end
+    end
+  end
+
+  example "flex-grow-004", "'grow' values have no effect when no empty space exists" do
+    UI.build do
+      node(width: 240, height: 60, background: DARK_BACKGROUND) do
+        node(width: 120, height: 60, grow: 3, background: {r:200})
+        node(width: 120, height: 60, grow: 2, background: {g:200})
+      end
+    end
+  end
+
+  # @SKIPPED flex-grow-005
+  # @REASON All nodes are considered flex containers.
+
+  example "flex-grow-006", "all space will be taken up by a single flex item with any positive 'grow' value" do
+    UI.build(flex: { direction: :column }) do
+      node(width: 240, height: 60, background: DARK_BACKGROUND) do
+        node(width: 120, height: 60, grow: 1.5, background: {r:200})
+      end
+      node(width: 240, height: 60, background: DARK_BACKGROUND) do
+        node(width: 120, height: 60, grow: 2, background: {g:200})
+      end
+    end
+  end
+
+  example "flex-grow-007", "remaining space is calculated for positive 'grow' values less than one" do
+    UI.build(flex: { direction: :column }) do
+      node(width: 240, height: 60, background: DARK_BACKGROUND) do
+        node(width: 120, height: 60, grow: 0.1, background: {r:200})
+      end
+      node(width: 240, height: 60, background: DARK_BACKGROUND) do
+        node(width: 120, height: 60, grow: 0.05, background: {g:200})
+        node(width: 120, height: 60, grow: 0.05, background: {b:200})
       end
     end
   end
