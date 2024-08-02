@@ -726,8 +726,16 @@ module Examples
     end
   end
 
+  example "css-flexbox-img-expand-evenly", "3 rectangular images fill out border" do
+    UI.build do
+      node(width: 300, height: 50, border: 2) do
+        node({ path: "solidblue.png" }, width: 48, grow: 1, border: :white)
+        node({ path: "solidblue.png" }, width: 48, grow: 1, border: :white)
+        node({ path: "solidblue.png" }, width: 48, grow: 1, border: :white)
+      end
+    end
+  end
 
-  # @SKIPPED css-flexbox-img-expand-evenly
   # @SKIPPED css-flexbox-row-reverse-wrap-reverse
   # @SKIPPED css-flexbox-row-reverse-wrap
   # @SKIPPED css-flexbox-row-reverse
@@ -735,6 +743,8 @@ module Examples
   # @SKIPPED css-flexbox-row-wrap
   # @SKIPPED css-flexbox-row
   # @SKIPPED css-flexbox-test1
+  # @REASON No support for writing direction.
+
   # @SKIPPED direction-upright-002
   # @SKIPPED display-flex-001
   # @SKIPPED display_flex_exist

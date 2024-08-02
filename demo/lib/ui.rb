@@ -108,10 +108,10 @@ module UI
       end
 
       if @rect
-        @rect.x = self.x
-        @rect.y = self.y
-        @rect.w = self.w
-        @rect.h = self.h
+        @rect.x = self.x + border_w
+        @rect.y = self.y + border_w
+        @rect.w = self.w - border_w - border_w
+        @rect.h = self.h - border_w - border_w
 
         $gtk.draw_primitive(rect)
       end
