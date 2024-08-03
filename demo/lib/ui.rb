@@ -608,6 +608,7 @@ module UI
 
           main_used = 0
           line.each_with_index do |child, idx|
+            # @TODO Implement looping flex resolution, a la https://www.w3.org/TR/css-flexbox-1/#flex-base-size.
             grow = child.internal.grow
             shrink = child.internal.shrink
             if grow_fraction && grow > 0
@@ -626,9 +627,11 @@ module UI
               size += (shrink_fraction * total_shrink) - main_used if idx == line.length - 1
 
               if horizontal_layout?(node)
-                child.internal.definite_width += size
+                child.internal.definite_width = child.internal.definite_width.add(size).clamp(0)
+
               else
-                child.internal.definite_height += size
+                child.internal.definite_height = child.internal.definite_height.add(size).clamp(0)
+
               end
             end
 
@@ -720,8 +723,8 @@ module UI
       end
 
       queue.each do |node|
-        node.internal.screen_width = node.internal.definite_width.round
-        node.internal.screen_height = node.internal.definite_height.round
+        node.internal.screen_width = node.internal.definite_width.round.clamp(0)
+        node.internal.screen_height = node.internal.definite_height.round.clamp(0)
 
         left = target.x
         top = target.y + target.h

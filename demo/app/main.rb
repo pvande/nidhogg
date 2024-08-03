@@ -906,4 +906,53 @@ module Examples
       end
     end
   end
+
+  example "flex-shrink-003", ":shrink is initially '1'" do
+    UI.build(flex: { direction: :column }) do
+      node(width: 100, height: 80, background: DARK_BACKGROUND) do
+        node(width: 100, height: 80, background: {r:200})
+        node(width: 100, height: 80, shrink: 4, background: {g:200})
+      end
+      node(width: 100, height: 20, background: DARK_BACKGROUND) do
+        node(width: 80, height: 20, background: {r:100})
+        node(width: 20, height: 20, shrink: 4, background: {g:100})
+      end
+    end
+  end
+
+  example "flex-shrink-004", ":shrink has no effect if there's adequate space for children" do
+    UI.build() do
+      node(width: 100, height: 100, background: DARK_BACKGROUND) do
+        node(width: 40, height: 80, shrink: 2, background: {r:200})
+        node(width: 40, height: 80, shrink: 3, background: {g:200})
+      end
+    end
+  end
+
+  example "flex-shrink-005", ":shrink will prevent resizing when set to '0'" do
+    UI.build() do
+      node(width: 50, height: 100, background: DARK_BACKGROUND) do
+        node(width: 50, height: 80, shrink: 0, background: {r:200})
+        node(width: 50, height: 80, shrink: 0, background: {g:200})
+      end
+    end
+  end
+
+  # @SKIPPING flex-shrink-006
+  # @REASON We don't yet properly resolve flex sizes iteratively.
+
+  # @SKIPPED flex-shrink-007
+  # @REASON All nodes are considered flex containers.
+
+  example "flex-shrink-008", "remaining space is calculated for positive 'shrink' values less than one" do
+    UI.build(flex: { direction: :column }) do
+      node(width: 100, height: 50, background: DARK_BACKGROUND) do
+        node(width: 120, height: 50, grow: 0.9, background: {r:200})
+      end
+      node(width: 100, height: 50, background: DARK_BACKGROUND) do
+        node(width: 120, height: 50, grow: 0.25, background: {g:200})
+        node(width: 120, height: 50, grow: 0.25, background: {b:200})
+      end
+    end
+  end
 end
