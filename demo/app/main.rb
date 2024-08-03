@@ -888,4 +888,22 @@ module Examples
       end
     end
   end
+
+  example "flex-shrink-001", ":shrink determines how much the flex item will shrink relative to the others when negative free space is distributed" do
+    UI.build do
+      node(width: 100, height: 100, background: DARK_BACKGROUND) do
+        node(width: 100, height: 80, shrink: 2, background: {r:200})
+        node(width: 100, height: 80, shrink: 3, background: {g:200})
+      end
+    end
+  end
+
+  example "flex-shrink-002", ":shrink is invalid when set to a negative number" do
+    UI.build do
+      node(width: 100, height: 100, background: DARK_BACKGROUND) do
+        node(width: 100, height: 80, shrink: -2, background: {r:200})
+        node(width: 100, height: 80, shrink: -3, background: {g:200})
+      end
+    end
+  end
 end

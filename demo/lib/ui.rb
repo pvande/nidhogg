@@ -371,6 +371,14 @@ module UI
         node.internal.border = { width: 0, color: {} }
         node.internal.typeface = {}
 
+        node.internal.grow = node.style.grow
+        node.internal.grow = 0 unless node.internal.grow.is_a?(Numeric)
+        node.internal.grow = 0 if node.internal.grow < 0
+
+        node.internal.shrink = node.style.shrink
+        node.internal.shrink = 1 unless node.internal.shrink.is_a?(Numeric)
+        node.internal.shrink = 1 if node.internal.shrink < 0
+
         # Determine the border metrics.
         case node.style.dig(:border)
         when Integer
@@ -484,18 +492,10 @@ module UI
       queue.each do |node|
         next if node.is_a?(::UI::TextNode)
 
-        main_pos = main_start = horizontal_layout?(node) ? node.internal.screen_x + node.internal.border.width + node.internal.padding.left : node.internal.screen_y + node.internal.border.width + node.internal.padding.top
         cross_pos = cross_start = horizontal_layout?(node) ? node.internal.screen_y + node.internal.border.width + node.internal.padding.top : node.internal.screen_x + node.internal.border.width + node.internal.padding.left
-
-        main_gap = horizontal_layout?(node) ? node.internal.gap.horizontal : node.internal.gap.vertical
         cross_gap = horizontal_layout?(node) ? node.internal.gap.vertical : node.internal.gap.horizontal
-
-        main_available = horizontal_layout?(node) ? node.internal.definite_width - node.internal.padding.horizontal : node.internal.definite_height - node.internal.padding.vertical
         cross_available = horizontal_layout?(node) ? node.internal.definite_height - node.internal.padding.vertical : node.internal.definite_width - node.internal.padding.horizontal
-        main_available -= node.internal.border.width.mult(2)
         cross_available -= node.internal.border.width.mult(2)
-
-        main_content = main_available
         cross_content = cross_available
 
         lines = node.internal.lines
@@ -520,6 +520,12 @@ module UI
         end
 
         lines.each_with_index do |line, idx|
+          main_pos = main_start = horizontal_layout?(node) ? node.internal.screen_x + node.internal.border.width + node.internal.padding.left : node.internal.screen_y + node.internal.border.width + node.internal.padding.top
+          main_gap = horizontal_layout?(node) ? node.internal.gap.horizontal : node.internal.gap.vertical
+          main_available = horizontal_layout?(node) ? node.internal.definite_width - node.internal.padding.horizontal : node.internal.definite_height - node.internal.padding.vertical
+          main_available -= node.internal.border.width.mult(2)
+          main_content = main_available
+
           cross_size = cross_sizes[idx]
           stretched = false
           total_grow = 0
@@ -547,13 +553,17 @@ module UI
               end
             end
 
-            total_grow += child.style.grow if child.style.fetch(:grow, 0) > 0
-            total_shrink += child.style.shrink if child.style.fetch(:shrink, 0) > 0
+            total_grow += child.internal.grow
+            total_shrink += child.internal.shrink
           end
 
           grow_fraction = nil
-          if total_grow.positive?
+          shrink_fraction = nil
+          if main_available.positive? && total_grow.positive?
             grow_fraction = main_available / total_grow
+            main_available = 0
+          elsif main_available.negative? && total_shrink.positive?
+            shrink_fraction = main_available / total_shrink
             main_available = 0
           end
 
@@ -598,11 +608,22 @@ module UI
 
           main_used = 0
           line.each_with_index do |child, idx|
-            grow = child.style.fetch(:grow, 0)
+            grow = child.internal.grow
+            shrink = child.internal.shrink
             if grow_fraction && grow > 0
               size = grow.mult(grow_fraction).round
               main_used += size
               size += (grow_fraction * total_grow) - main_used if idx == line.length - 1
+
+              if horizontal_layout?(node)
+                child.internal.definite_width += size
+              else
+                child.internal.definite_height += size
+              end
+            elsif shrink_fraction && shrink > 0
+              size = shrink.mult(shrink_fraction).round
+              main_used += size
+              size += (shrink_fraction * total_shrink) - main_used if idx == line.length - 1
 
               if horizontal_layout?(node)
                 child.internal.definite_width += size
