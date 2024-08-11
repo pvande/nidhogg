@@ -28,7 +28,7 @@ module GTK
       when "Windows"
         `cmd /c \"echo | set /p dummy=#{text}| clip\"`
       when "Mac OS X"
-        `bash -c 'echo -n "#{text}" | pbcopy'`
+        `bash -c 'echo -n "#{text.gsub('"', %("'"'")).gsub("'", %('"'"'))}" | pbcopy'`
       end
     end
   end
