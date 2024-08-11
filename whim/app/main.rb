@@ -217,16 +217,16 @@ def self.init
   $state.modal = nil
   $state.modals = {
     open_file: UI.build(border: SELECTION_COLOR, background: EDITOR_BG_COLOR, color: TEXT_COLOR, flex: { direction: :column }) do
-      node(padding: 5, align: { self: :center }) { text "Open File…" }
+      node(padding: 5, background: SELECTION_COLOR, align: { self: :stretch }) { text "Open File…" }
       node(id: "pwd", background: SCROLLBAR_BG_COLOR, padding: 5, align: { self: :stretch })
-      node(id: "file_list", color: :black, background: :grey, grow: 1, flex: { direction: :column })
+      node(id: "file_list", grow: 1, flex: { direction: :column })
       node(padding: 5, gap: 10, background: SCROLLBAR_BG_COLOR, justify: { content: :end }) do
         node(id: "cancel", border: { color: BORDER_COLOR }, width: 100, padding: [5, 10], justify: { content: :center }) { text "Cancel" }
         node(id: "accept", border: { color: BORDER_COLOR }, width: 100, padding: [5, 10], justify: { content: :center }) { text "Open" }
       end
     end,
     about: UI.build(border: SELECTION_COLOR, background: EDITOR_BG_COLOR, color: TEXT_COLOR, flex: { direction: :column }) do
-      node(padding: 5, align: { self: :center }) { text "About Whim (ALPHA)" }
+      node(padding: 5, background: SELECTION_COLOR, align: { self: :stretch }) { text "About Whim (ALPHA)" }
       node(background: EDITOR_BG_COLOR, grow: 1, flex: { direction: :column }, align: { items: :center }) do
         node({ path: "metadata/icon.png" }, width: 200, height: 200)
         text "Whim is a simple text editor written in DragonRuby."
@@ -341,6 +341,7 @@ def self.tick_modal
       colors = { background: SELECTION_COLOR } if $state.selected_file == idx
 
       modal["file_list"] << UI.build(padding: 10, **colors) do
+        node({ path: "images/#{file.is_dir ? "folder" : "document"}.png" }, width: 16, height: 16, margin: { right: 10 })
         text(file.name)
       end
     end
