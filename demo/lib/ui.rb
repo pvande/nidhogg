@@ -1,10 +1,7 @@
 module UI
   def self.build(rect = nil, **style, &block)
     root = Node.new(rect, **style)
-
-    builder = Builder.new(root)
-    builder.instance_eval(&block) if block_given?
-
+    Builder.new(root).instance_eval(&block) if block_given?
     return root
   end
 
@@ -14,21 +11,20 @@ module UI
       @stack = [root]
     end
 
-    def node(rect = nil, id: nil, **style, &block)
-      node = Node.new(rect, id: id, parent: @stack.last, **style)
-      @stack << node
+    def node(rect = nil, **style, &block)
+      @stack << Node.new(rect, **style, parent: @stack.last)
       instance_eval(&block) if block
     ensure
       @stack.pop
     end
 
     def text(text = "", **style)
-      label = TextNode.new(text, parent: @stack.last, **style)
+      TextNode.new(text, **style, parent: @stack.last)
     end
   end
 
   class Node
-    attr_reader :parent
+    attr_accessor :parent
     attr_reader :rect, :id, :style, :children
     attr_reader :internal
 
@@ -45,6 +41,13 @@ module UI
 
       @descendent_index = {}
       @descendent_index[@id] = self if @id
+    end
+
+    def <<(child)
+      @children << child
+      child.parent = self
+      @descendant_index[child.id] = child if child.id
+      return child
     end
 
     # Look up descendant nodes by `id`. If multiple nodes with the same ID are
@@ -726,8 +729,8 @@ module UI
         node.internal.screen_width = node.internal.definite_width.round.clamp(0)
         node.internal.screen_height = node.internal.definite_height.round.clamp(0)
 
-        left = target.x
-        top = target.y + target.h
+        left = target.left || target.x
+        top = target.top || target.y + target.h
         node.internal.screen_x = (left + node.internal.screen_x).round
         node.internal.screen_y = (top - node.internal.definite_height - node.internal.screen_y).round
       end
