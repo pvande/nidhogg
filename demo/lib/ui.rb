@@ -482,7 +482,11 @@ module UI
 
           main += delta_main
           main += horizontal_layout?(node) ? node.internal.gap.row : node.internal.gap.column if positional_alignment?(node)
-          lines.last&.push(child)
+          if reverse_layout?(node)
+            lines.last&.unshift(child)
+          else
+            lines.last&.push(child)
+          end
 
           child_size = horizontal_layout?(node) ? child.internal.definite_height : child.internal.definite_width
           longest_child = child_size if child_size > longest_child
@@ -729,10 +733,16 @@ module UI
         node.internal.screen_width = node.internal.definite_width.round.clamp(0)
         node.internal.screen_height = node.internal.definite_height.round.clamp(0)
 
-        left = target.left || target.x
-        top = target.top || target.y + target.h
+        left = target.left
+        left ||= target.right - root.internal.screen_width if target.right
+        left ||= target.x
+
+        top = target.top
+        top ||= target.bottom + root.internal.screen_height if target.bottom
+        top ||= target.y + target.h
+
         node.internal.screen_x = (left + node.internal.screen_x).round
-        node.internal.screen_y = (top - node.internal.definite_height - node.internal.screen_y).round
+        node.internal.screen_y = (top - node.internal.screen_height - node.internal.screen_y).round
       end
     end
 

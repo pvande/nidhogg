@@ -809,20 +809,142 @@ module Examples
   # @SKIPPED flex-factor-less-than-one
   # @SKIPPED flex-flexitem-childmargin
   # @SKIPPED flex-flexitem-percentage-prescation
-  # @SKIPPED flex-flow-001
-  # @SKIPPED flex-flow-002
-  # @SKIPPED flex-flow-003
-  # @SKIPPED flex-flow-004
-  # @SKIPPED flex-flow-005
-  # @SKIPPED flex-flow-006
-  # @SKIPPED flex-flow-007
-  # @SKIPPED flex-flow-008
-  # @SKIPPED flex-flow-009
-  # @SKIPPED flex-flow-010
-  # @SKIPPED flex-flow-011
-  # @SKIPPED flex-flow-012
-  # @SKIPPED flex-flow-013
   # @REASON Time.
+
+  example "flex-flow-001", "flex: { direction: :row, wrap: false }" do
+    UI.build do
+      node(width: 100, height: 60, background: :red, flex: { direction: :row, wrap: false }) do
+        node(width: 50, height: 50, background: :green) { text "1" }
+        node(width: 50, height: 50, background: :green) { text "2" }
+        node(width: 50, height: 50, background: :green) { text "3" }
+        node(width: 50, height: 50, background: :green) { text "4" }
+      end
+    end
+  end
+
+  example "flex-flow-002", "flex: { direction: :row, wrap: true }" do
+    UI.build do
+      node(width: 100, height: 100, background: :red, flex: { direction: :row, wrap: true }) do
+        node(width: 50, height: 50, background: :green) { text "1" }
+        node(width: 50, height: 50, background: :green) { text "2" }
+        node(width: 50, height: 50, background: :green) { text "3" }
+        node(width: 50, height: 50, background: :green) { text "4" }
+      end
+    end
+  end
+
+  example "flex-flow-003", "flex: { direction: :row, wrap: :reverse }" do
+    UI.build do
+      node(width: 100, height: 100, background: :red, flex: { direction: :row, wrap: :reverse }) do
+        node(width: 50, height: 50, background: :green) { text "3" }
+        node(width: 50, height: 50, background: :green) { text "4" }
+        node(width: 50, height: 50, background: :green) { text "1" }
+        node(width: 50, height: 50, background: :green) { text "2" }
+      end
+    end
+  end
+
+  example "flex-flow-004", "flex: { direction: :row_reverse, wrap: false }" do
+    UI.build do
+      node(width: 100, height: 60, background: :red, flex: { direction: :row_reverse, wrap: false }) do
+        node(width: 50, height: 50, background: :green) { text "4" }
+        node(width: 50, height: 50, background: :green) { text "3" }
+        node(width: 50, height: 50, background: :green) { text "2" }
+        node(width: 50, height: 50, background: :green) { text "1" }
+      end
+    end
+  end
+
+  example "flex-flow-005", "flex: { direction: :row_reverse, wrap: true }" do
+    UI.build do
+      node(width: 100, height: 100, background: :red, flex: { direction: :row_reverse, wrap: true }) do
+        node(width: 50, height: 50, background: :green) { text "2" }
+        node(width: 50, height: 50, background: :green) { text "1" }
+        node(width: 50, height: 50, background: :green) { text "4" }
+        node(width: 50, height: 50, background: :green) { text "3" }
+      end
+    end
+  end
+
+  example "flex-flow-006", "flex: { direction: :row_reverse, wrap: :reverse }" do
+    UI.build do
+      node(width: 100, height: 100, background: :red, flex: { direction: :row_reverse, wrap: :reverse }) do
+        node(width: 50, height: 50, background: :green) { text "4" }
+        node(width: 50, height: 50, background: :green) { text "3" }
+        node(width: 50, height: 50, background: :green) { text "2" }
+        node(width: 50, height: 50, background: :green) { text "1" }
+      end
+    end
+  end
+
+  example "flex-flow-007", "flex: { direction: :column, wrap: false }" do
+    UI.build do
+      node(width: 60, height: 100, background: :red, flex: { direction: :column, wrap: false }) do
+        node(width: 50, height: 50, background: :green) { text "1" }
+        node(width: 50, height: 50, background: :green) { text "2" }
+        node(width: 50, height: 50, background: :green) { text "3" }
+        node(width: 50, height: 50, background: :green) { text "4" }
+      end
+    end
+  end
+
+  example "flex-flow-008", "flex: { direction: :column, wrap: true }" do
+    UI.build do
+      node(width: 100, height: 100, background: :red, flex: { direction: :column, wrap: true }) do
+        node(width: 50, height: 50, background: :green) { text "1" }
+        node(width: 50, height: 50, background: :green) { text "3" }
+        node(width: 50, height: 50, background: :green) { text "2" }
+        node(width: 50, height: 50, background: :green) { text "4" }
+      end
+    end
+  end
+
+  example "flex-flow-009", "flex: { direction: :column, wrap: :reverse }" do
+    UI.build do
+      node(width: 100, height: 100, background: :red, flex: { direction: :column, wrap: :reverse }) do
+        node(width: 50, height: 50, background: :green) { text "2" }
+        node(width: 50, height: 50, background: :green) { text "4" }
+        node(width: 50, height: 50, background: :green) { text "1" }
+        node(width: 50, height: 50, background: :green) { text "3" }
+      end
+    end
+  end
+
+  example "flex-flow-010", "flex: { direction: :column_reverse, wrap: false }" do
+    UI.build do
+      node(width: 60, height: 100, background: :red, flex: { direction: :column_reverse, wrap: false }) do
+        node(width: 50, height: 50, background: :green) { text "4" }
+        node(width: 50, height: 50, background: :green) { text "3" }
+        node(width: 50, height: 50, background: :green) { text "2" }
+        node(width: 50, height: 50, background: :green) { text "1" }
+      end
+    end
+  end
+
+  example "flex-flow-011", "flex: { direction: :column_reverse, wrap: true }" do
+    UI.build do
+      node(width: 100, height: 100, background: :red, flex: { direction: :column_reverse, wrap: true }) do
+        node(width: 50, height: 50, background: :green) { text "3" }
+        node(width: 50, height: 50, background: :green) { text "1" }
+        node(width: 50, height: 50, background: :green) { text "4" }
+        node(width: 50, height: 50, background: :green) { text "2" }
+      end
+    end
+  end
+
+  example "flex-flow-012", "flex: { direction: :column_reverse, wrap: :reverse }" do
+    UI.build do
+      node(width: 100, height: 100, background: :red, flex: { direction: :column_reverse, wrap: :reverse }) do
+        node(width: 50, height: 50, background: :green) { text "4" }
+        node(width: 50, height: 50, background: :green) { text "2" }
+        node(width: 50, height: 50, background: :green) { text "3" }
+        node(width: 50, height: 50, background: :green) { text "1" }
+      end
+    end
+  end
+
+  # @SKIPPED flex-flow-013
+  # @REASON No support for writing direction.
 
   example "flex-grow-001", "'grow' property specifies the flex grow factor" do
     UI.build do
