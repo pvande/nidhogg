@@ -1,0 +1,8 @@
+{
+  "files.associations": {
+    "runtime.h": "c",
+    "stdlib.h": "c",
+    "stdarg.h": "c",
+    "objc.h": "c"
+  }
+}

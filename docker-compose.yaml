@@ -1,0 +1,34 @@
+services:
+  gems:
+    image: ruby:alpine
+    volumes:
+      - bundler:/usr/local/bundle
+    command: gem install yard rackup
+
+  extract:
+    image: ruby:alpine
+    depends_on:
+      gems: { condition: service_completed_successfully }
+    working_dir: /source
+    volumes:
+      - .:/source
+      - bundler:/usr/local/bundle
+    command: >-
+      yard doc --yardopts .yardoc/yardopts --debug --output-dir docs
+
+  serve:
+    image: node:latest
+    depends_on:
+      - extract
+    working_dir: /source
+    volumes:
+      - ./docs:/source/docs
+      - npm:/source/node_modules
+    ports:
+      - 35729:35729
+    command: >
+      npx --yes docsify-cli serve docs
+
+volumes:
+  bundler: {}
+  npm: {}

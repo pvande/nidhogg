@@ -1,0 +1,13 @@
+{
+  "name": "nidhogg",
+  "repo": "pvande/nidhogg",
+  "loadSidebar": true,
+  "subMaxLevel": 4,
+  "autoHeader": true,
+  "auto2top": true,
+  "themeColor": "#D90006",
+  "search": {
+    "paths": "auto",
+    "depth": 6
+  }
+}

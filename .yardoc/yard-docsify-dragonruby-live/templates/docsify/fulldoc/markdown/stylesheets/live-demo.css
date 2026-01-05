@@ -1,0 +1,92 @@
+:root {
+  --preview-height: 360px;
+}
+
+.content {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  overflow: auto;
+}
+
+body.show-demo .content {
+  bottom: var(--preview-height);
+}
+
+.dragonruby-live-demo {
+  position: fixed;
+  display: flex;
+  box-sizing: content-box;
+  height: 361px;
+  left: 0;
+  right: 0;
+  bottom: -361px;
+  border-top: solid 1px var(--sidebar-border-color);
+  background: var(--sidebar-background);
+  z-index: 100;
+  transition: all var(--sidebar-transition-duration) ease-out;
+}
+
+body.close .dragonruby-live-demo {
+  left: var(--sidebar-width);
+}
+
+@media (min-width: 48em) {
+  .dragonruby-live-demo {
+    left: var(--sidebar-width);
+  }
+
+  body.close .dragonruby-live-demo {
+    left: 0;
+  }
+}
+
+body.show-demo .dragonruby-live-demo {
+  bottom: 0;
+}
+
+.dragonruby-live-demo .toggle {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  width: 2rem;
+  height: 2rem;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  border: solid 1px var(--sidebar-border-color);
+  background: var(--sidebar-toggle-background);
+  cursor: pointer;
+}
+
+.dragonruby-live-demo .toggle::before {
+  content: "⩓";
+  display: block;
+  text-align: center;
+}
+
+body.show-demo .dragonruby-live-demo .toggle::before {
+  content: "⩔";
+}
+
+.dragonruby-live-demo .preview {
+  aspect-ratio: 16 / 9;
+  flex-shrink: 1;
+  flex-basis: 50%;
+  max-height: 720px;
+  max-width: 1280px;
+}
+
+.dragonruby-live-demo > * {
+  flex-basis: 100%;
+}
+
+.dragonruby-live-demo iframe {
+  height: 100%;
+  margin: 0;
+  min-width: 100%;
+  border: none;
+  max-height: 720px;
+  max-width: 1280px;
+}

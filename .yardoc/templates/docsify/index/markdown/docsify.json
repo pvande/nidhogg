@@ -1,0 +1,10 @@
+{
+  "loadSidebar": true,
+  "autoHeader": true,
+  "auto2top": true,
+  "subMaxLevel": 4,
+  "search": {
+    "paths": "auto",
+    "depth": 6
+  }
+}

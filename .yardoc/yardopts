@@ -1,0 +1,10 @@
+--db .yardoc/db
+
+--template-path .yardoc/templates
+--template docsify
+--format markdown
+--markup none
+
+--load ./.yardoc/yard-docsify-dragonruby-live/lib/yard-docsify-dragonruby-live.rb
+
+- guide/**/*.md
